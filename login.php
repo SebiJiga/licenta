@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     try {
-        $db = new PDO("mysql:host=$db_host;dbname=$db_name;charset:utf8mb4",$db_user, $db_pass);
+        
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $stmt = $db->prepare('SELECT * from USERS where (email = :email or username =:username)');
