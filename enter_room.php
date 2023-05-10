@@ -28,6 +28,12 @@ if (!$room) {
     exit;
 }
 
+// Set the room_code for the user
+$user_id = $_SESSION['id'];
+$stmt = $db->prepare("UPDATE users SET room_code = ? WHERE id = ?");
+$stmt->execute([$room_code, $user_id]);
+
+
 // Redirect to the room page
 header("Location: room.php?code=" . urlencode($room_code));
 exit;

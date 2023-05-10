@@ -7,6 +7,7 @@ if(!is_logged_in()){
     header('Location: login.php');
     exit();
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -65,7 +66,7 @@ if(!is_logged_in()){
 
 
     function closePopup() {
-        document.getElementById("popup").style.display = "none";
+        document.getElementById("popupOverlay").classList.remove("popup-show");
     }
     
 const enterRoomBtn = document.querySelector('.enter-game-btn');
