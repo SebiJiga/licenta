@@ -14,15 +14,26 @@ if (!isset($_GET['code'])) {
     header('Location: index.php');
     exit;
 }
-$room_code = $_GET['code'];
 
+$room_code = $_GET['code'];
 // Fetch users from the database
 $stmt = $db->prepare("SELECT * FROM users WHERE room_code = ?");
 $stmt->execute([$room_code]);
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$stmt = $db->prepare("SELECT * FROM rooms WHERE code = ?");
+$stmt->execute([$room_code]);
+$room = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$room_code = $_GET['code'];
+if (!$room) {
+    $_SESSION['error'] = "Invalid room code";
+    header("Location: index.php");
+    exit;
+}
+
+
+$is_creator = $room['creator_id'] == $_SESSION['id'];
+
 ?>
 
 <!DOCTYPE html>
@@ -87,15 +98,15 @@ setInterval(fetchUsers, 1000);
         <a href="logout.php" class="logout-btn">Log out</a>
     </div>
 </header>
-<div class="room-container">
-    <h1 class ="room-code"> <?php echo $room_code; ?></h1>
-    <p class="room-paragraf">Share this code with other players to invite them to the room.</p>
-</div>
+    <div class="room-container">
+        <h1 class ="room-code"> <?php echo $room_code; ?></h1>
+        <p class="room-paragraf">Share this code with other players to invite them to the room.</p>
+    </div>
 
-<div class="users-list-container">
+    <div class="users-list-container">
         <h2>Players in the room:</h2>
-        <ul class="users-list"id="users-list">
-            <?php foreach ($users as $user): ?>
+            <ul class="users-list"id="users-list">
+                <?php foreach ($users as $user): ?>
                 <li>
                     <?php if(isset($user['profile_picture'])) { ?>
                         <img src="<?php echo htmlspecialchars($user['profile_picture']); ?>" alt="User profile picture" class="player-profile-picture">
@@ -106,21 +117,17 @@ setInterval(fetchUsers, 1000);
                 </li>
             <?php endforeach; ?>
         </ul>
-</div>
+    </div>
 
+ 
+ <?php if ($is_creator): ?>
     <div class="game-settings">
         <label for="timer">Round timer (in seconds):</label>
         <input class="timer-settings" type="number" id="timer" value="60" min="10" max="240">
     </div>
+<?php endif; ?>
 
     <button class="start-game-button" id="start-game">Start Game</button>
 
-    <div class="chat-container">
-  <div class="messages-container" id="messages-container">
-
-  </div>
-
-</div>
-</div>
 </body>
 </html>

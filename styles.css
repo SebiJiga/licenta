@@ -131,31 +131,6 @@ button[type="submit"]:hover {
   background-color: #3e8e41;
 }
 
-.room-container {
-    position: absolute;
-    padding-left: 80%;
-    margin-right: 10px;
-    border-radius: 30px;
-}
-
-
-.room-code {
-    text-align: center;
-    font-weight: bold;
-    color: #fff;
-    background-color: #4CAF50;
-    border: none;
-    border-radius: 5px;
-    margin: 10px;
-    font-size: 24px;
-    padding: 16px 32px;
-    
-}
-
-.room-paragraf {
-    color:#0062cc;
-}
-
 /* Popup styles */
 .popup-overlay {
     position: fixed;
@@ -241,7 +216,39 @@ button[type="submit"]:hover {
     }
   }
 
-  .player-profile-picture {
+  /*ROOM //////////////////////////////////////////////////////////////////////////////////////////////// */
+
+.room-container {
+    position: absolute;
+    bottom: 0;
+    left: 1%;
+    margin-left:10px;
+    margin-bottom: 10px;
+    transform: translateX(0%);
+    
+}
+
+.room-code {
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    margin: 10px;
+    font-size: 24px;
+    padding: 16px 32px;
+    
+}
+
+.room-paragraf {
+    color:#0062cc;
+}
+
+/*user list*/
+
+
+.player-profile-picture {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -250,15 +257,16 @@ button[type="submit"]:hover {
 }
 
 .users-list-container {
-
-    position: relative;
+    position: absolute;
     display: inline-block;
     width: 300px;
     padding: 20px;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    margin: 20px;
+   top:10%;
+   right:1%;
+    margin-right:5px;
 }
 
 .users-list {
@@ -279,23 +287,26 @@ button[type="submit"]:hover {
     margin-bottom: 0;
 }
 
+/*/////////////////////////////////////////////////.........................*/
+
 .game-settings {
     font-weight: bold;
     position: absolute;
-    display: inline-block;
-    padding-left: 30%;
-    margin-top:20px;
-    margin-right: 10px;
+    bottom: 10%;
+    margin-bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .timer-settings {
+    position: absolute;
     text-align: center;
     font-weight: bold;
     color: #fff;
     background-color: #4CAF50;
     border: none;
     border-radius: 5px;
-    margin: 10px;
+    margin-bottom: 10px;
     font-size: 24px;
     padding: 16px 32px;
     
@@ -303,9 +314,11 @@ button[type="submit"]:hover {
 
 .start-game-button {
     position: absolute;
-    display: inline-block;
+    bottom: 5%;
+    right: 20px;
     font-weight: bold;;
-    margin-top:50px;
+    margin-bottom: 10px;
+    margin-right:10px;
     color: #fff;
     background-color: #4CAF50;
     border: none;
@@ -315,4 +328,3 @@ button[type="submit"]:hover {
     cursor:pointer;
     text-decoration: none;
 }
-

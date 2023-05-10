@@ -16,6 +16,7 @@ if (!isset($_POST['room_code'])) {
 
 // Get the room code from the form
 $room_code = $_POST['room_code'];
+var_dump($room_code);
 
 // Check if the room exists in the database
 $stmt = $db->prepare("SELECT * FROM rooms WHERE code = :code");
@@ -33,7 +34,7 @@ $user_id = $_SESSION['id'];
 $stmt = $db->prepare("UPDATE users SET room_code = ? WHERE id = ?");
 $stmt->execute([$room_code, $user_id]);
 
-
+$_SESSION['room_code'] = $room_code;
 // Redirect to the room page
 header("Location: room.php?code=" . urlencode($room_code));
 exit;
