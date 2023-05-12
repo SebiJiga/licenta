@@ -28,6 +28,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $image_ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
         $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
 
+
         if(!in_array($image_ext, $allowed_extensions)) {
             $error = 'Invalid file type. Please choose a JPG, JPEG, PNG, or GIF file.';
         } elseif ($image_size > 5000000) {
@@ -88,14 +89,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 				<label for="username">Username:</label>
 				<input type="text" name="username" id="username">
 			</div>
-			<div class="btn-container">
-				<button type="submit">Save Changes</button>
-			</form>
-			<form method="POST" action="delete_profile_picture.php">
-				<button type="submit">Delete Profile Picture</button>
-			</form>
-			</div>
-		</form>
+            <form>
+			<div class="button-container">
+				<button class="button-save-changes"type="submit">Save Changes</button>
+			
+			    <form method="POST" action="delete_profile_picture.php">
+				<button class="button-delete" type="submit">Delete Profile Picture</button>
+			    </form>
+            </div>
+	</div>
 	</div>
 </body>
 </html>

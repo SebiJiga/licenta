@@ -45,11 +45,32 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
 </head>
 
 <script>
+window.onload = function() {
+    var startGameButton =document.getElementById('start-game');
+    if(startGameButton) {
+        startGameButton.addEventListener('click', function() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'start_game.php', true);
+            
+            var formData = new FormData();
+            formData.append('timer', document.getElementById('timer').value);
+
+            xhr.send(formData);
+        })
+    }
+}
+
 function fetchUsers() {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            var users = JSON.parse(xhr.responseText);
+            var response = JSON.parse(xhr.responseText);
+            var users = response.users;
+            if(response.game_started) {
+                window.location.href = 'game.php';
+                return;
+            }
+
             var usersList = document.getElementById('users-list');
             usersList.innerHTML = '';
 
@@ -75,8 +96,8 @@ function fetchUsers() {
     xhr.open('GET', 'fetch_users.php', true);
     xhr.send();
 }
-
 setInterval(fetchUsers, 1000);
+
 </script>
 
 <body>
@@ -98,11 +119,17 @@ setInterval(fetchUsers, 1000);
         <a href="logout.php" class="logout-btn">Log out</a>
     </div>
 </header>
+<?php if ($is_creator): ?>
     <div class="room-container">
         <h1 class ="room-code"> <?php echo $room_code; ?></h1>
         <p class="room-paragraf">Share this code with other players to invite them to the room.</p>
     </div>
-
+    <?php else :?>
+    <div class="room-container-not-creator">
+        <h1 class ="room-code"> <?php echo $room_code; ?></h1>
+        <p class="room-paragraf">Share this code with other players to invite them to the room.</p>
+    </div>
+    <?php endif; ?>
     <div class="users-list-container">
         <h2>Players in the room:</h2>
             <ul class="users-list"id="users-list">
@@ -125,9 +152,11 @@ setInterval(fetchUsers, 1000);
         <label for="timer">Round timer (in seconds):</label>
         <input class="timer-settings" type="number" id="timer" value="60" min="10" max="240">
     </div>
+    <button class="start-game-button" id="start-game">Start Game</button>
+
 <?php endif; ?>
 
-    <button class="start-game-button" id="start-game">Start Game</button>
+    
 
 </body>
 </html>
