@@ -54,6 +54,7 @@ window.onload = function() {
             
             var formData = new FormData();
             formData.append('timer', document.getElementById('timer').value);
+            formData.append('rounds', document.getElementById('rounds').value);
 
             xhr.send(formData);
         })
@@ -121,13 +122,13 @@ setInterval(fetchUsers, 1000);
 </header>
 <?php if ($is_creator): ?>
     <div class="room-container">
-        <h1 class ="room-code"> <?php echo $room_code; ?></h1>
         <p class="room-paragraf">Share this code with other players to invite them to the room.</p>
-    </div>
+        <h1 class ="room-code"> <?php echo $room_code; ?></h1>
+        </div>
     <?php else :?>
     <div class="room-container-not-creator">
-        <h1 class ="room-code"> <?php echo $room_code; ?></h1>
         <p class="room-paragraf">Share this code with other players to invite them to the room.</p>
+        <h1 class ="room-code"> <?php echo $room_code; ?></h1>
     </div>
     <?php endif; ?>
     <div class="users-list-container">
@@ -149,9 +150,25 @@ setInterval(fetchUsers, 1000);
  
  <?php if ($is_creator): ?>
     <div class="game-settings">
-        <label for="timer">Round timer (in seconds):</label>
-        <input class="timer-settings" type="number" id="timer" value="60" min="10" max="240">
+        <label for="timer">Round timer</label>
+        <label for="timer">(seconds)</label>
+        <select class="timer-settings" id="timer">
+            <option value="60">60</option>
+            <option value="120">120</option>
+            <option value="180">180</option>
+            <option value="240">240</option>
+        </select>    
     </div>
+
+    <div class="rounds">
+    <label for="rounds">Number of rounds:</label>
+        <select class="rounds-settings" id="rounds">
+            <option value="5">5 rounds</option>
+            <option value="10">10 rounds</option>
+            <option value="26">Whole alphabet (26 rounds)</option>
+        </select>
+    </div>
+        
     <button class="start-game-button" id="start-game">Start Game</button>
 
 <?php endif; ?>

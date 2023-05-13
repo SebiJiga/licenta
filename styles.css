@@ -256,7 +256,69 @@ input[type="text"] {
 }
 
 .room-paragraf {
-    color:#0062cc;
+    font-weight: bold;
+}
+
+
+.game-settings {
+    font-weight: bold;
+    position: absolute;
+    bottom: 10%;
+    margin-bottom: 10px;
+    left: 40%;
+    transform: translateX(-50%);
+}
+
+.timer-settings {
+    position: absolute;
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 24px;
+    padding: 16px 32px;
+}
+
+.rounds{
+    font-weight: bold;
+    position: absolute;
+    bottom: 10%;
+    margin-bottom: 10px;
+    left: 60%;
+    transform: translateX(-50%);
+}
+.rounds-settings {
+    position: absolute;
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4CAF50;
+    max-width: 200px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    padding: 16px 32px;
+}
+
+.start-game-button {
+    position: absolute;
+    bottom: 2%;
+    right: 20px;
+    font-weight: bold;;
+    margin-bottom: 10px;
+    margin-right:10px;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    font-size: 24px;
+    padding: 16px 32px;
+    cursor:pointer;
+    text-decoration: none;
 }
 
 /*user list*/
@@ -303,44 +365,43 @@ input[type="text"] {
 
 /*/////////////////////////////////////////////////.........................*/
 
-.game-settings {
-    font-weight: bold;
-    position: absolute;
-    bottom: 10%;
-    margin-bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
+@media screen and (max-width:1300px) {
+    .game-settings {
+        position: absolute;
+        bottom:30%;
+        left:1%;
+        transform: none;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .rounds {
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        transform: none;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
-.timer-settings {
-    position: absolute;
-    text-align: center;
-    font-weight: bold;
-    color: #fff;
-    background-color: #4CAF50;
-    border: none;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    font-size: 24px;
-    padding: 16px 32px;
+@media screen and (max-width: 950px) {
     
-}
-
-.start-game-button {
-    position: absolute;
-    bottom: 5%;
-    right: 20px;
-    font-weight: bold;;
-    margin-bottom: 10px;
-    margin-right:10px;
-    color: #fff;
-    background-color: #4CAF50;
-    border: none;
-    border-radius: 5px;
-    font-size: 24px;
-    padding: 16px 32px;
-    cursor:pointer;
-    text-decoration: none;
+    .rounds {
+        position: absolute;
+        bottom: 30%;
+        left: 21%;
+        transform: none;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .start-game-button {
+        position: absolute;
+        bottom:1%;
+        right:1%;
+        transform: none;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 /*//////////////////////////////////////////////////////////////////GAME///////////////////////////////*/
@@ -422,17 +483,42 @@ padding:15px;
     pointer-events:none;
 }
 
-.TOMAPAN-SCORE {
+.TOMAPAN-ROUNDS {
+    
     position: absolute;
-    right:1%;
+    left:49%;
     text-align: center;
     font-weight: bold;
     color: #fff;
     background-color: #4CAF50;
     border: none;
     border-radius: 5px;
-    margin-right: 10px;
-    font-size: 12px;
-    padding: 8px 16px;
+    margin-left: 10px;
+    font-size: 24px;
+    padding: 16px 32px;
     pointer-events:none;
+}
+
+.TOMAPAN-SCORE {
+    position: absolute;
+    text-align: center;
+    right: 1%;
+    margin-right:10px;
+    transform: translateX(0%);
+    pointer-events: none;
+}
+.TOMAPAN-SCORE p{
+    font-weight: bold;
+}
+
+.TOMAPAN-SCORE h1{  
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    margin: 10px;
+    font-size: 24px;
+    padding: 16px 32px;
 }

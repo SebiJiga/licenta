@@ -92,7 +92,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form>
 			<div class="button-container">
 				<button class="button-save-changes"type="submit">Save Changes</button>
-			
 			    <form method="POST" action="delete_profile_picture.php">
 				<button class="button-delete" type="submit">Delete Profile Picture</button>
 			    </form>
