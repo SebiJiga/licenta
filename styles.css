@@ -522,3 +522,24 @@ padding:15px;
     font-size: 24px;
     padding: 16px 32px;
 }
+
+@keyframes letter-animation {
+    0% { opacity: 0; transform: scale(0); }
+    100% {opacity: 1; transform: scale(1); }
+}
+
+#random-letter {
+    font-weight: bold;
+    font-family: fantasy;
+    position: absolute;
+    text-align: center;
+    left: 6%;
+    margin-left:10px;
+    color: #333;
+    border:none;
+    border-radius: 3px;
+    font-size:40px;
+    padding: 16px 32px;
+    pointer-events: none;
+    animation: letter-animation 1s ease-in-out;
+}

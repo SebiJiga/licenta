@@ -21,20 +21,32 @@ $rounds = $_SESSION['rounds'];
 
 <script>
 document.addEventListener('DOMContentLoaded', (event) => {
+    let defaultTimerDuration = <?php echo isset($_SESSION['timer']) ? $_SESSION['timer'] : '0'; ?>;
+    let timerDuration = defaultTimerDuration;
     var countdownElement = document.getElementById('timer-display');
-    var timerDuration = <?php echo isset($_SESSION['timer']) ? $_SESSION['timer'] : '0'; ?>;
-    
-    console.log("Timer duration: " + timerDuration);
 
-    var countdown = setInterval(function () {
-        console.log("In the interval");
-        timerDuration--;
-        countdownElement.innerText = timerDuration;
+    var countdown;
+    function startTimer() {
+        countdown = setInterval(function () {
+            console.log("In the interval");
+            timerDuration--;
+            countdownElement.innerText = timerDuration;
 
-        if(timerDuration <= 0) {
-            clearInterval(countdown);
-        }  
-    }, 1000);
+            if(timerDuration <= 0) {
+                clearInterval(countdown);
+                timerDuration = defaultTimerDuration; // Reset the timer
+                endRound();
+            }  
+        }, 1000);
+
+        document.getElementById('tari').disabled = false;
+        document.getElementById('orase').disabled = false;
+        document.getElementById('munti').disabled = false;
+        document.getElementById('ape').disabled = false;
+        document.getElementById('plante').disabled = false;
+        document.getElementById('animale').disabled = false;
+        document.getElementById('nume').disabled = false;
+    }
 
     function submitResponses() {
       var country = document.getElementById('tari').value;
@@ -50,9 +62,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
       var formData = new FormData();
       formData.append('responses', JSON.stringify ({
-        'country': contry,
+        'country': country,
         'city': city,
-        'mountai':mountain,
+        'mountain':mountain,
         'waters':waters,
         'plants':plants,
         'animals':animals,
@@ -61,24 +73,72 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
       xhr.send(formData);
     }
+
+    let roundsRemaining = <?php echo isset($_SESSION['rounds']) ? $_SESSION['rounds'] : '0'; ?>;
+    let usedLetters = [];
+    let currentLetter = '';
+
+    function generateLetter() {
+      let letter;
+      do {
+        letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+      } while (usedLetters.includes(letter));
+
+      usedLetters.push(letter);
+      currentLetter = letter;
+      document.getElementById('random-letter').textContent = currentLetter;
+    }
+    
+    function startRound() {
+      roundsRemaining--;
+      if (roundsRemaining < 0) {
+        endGame();
+        return;
+      }
+
+      generateLetter();
+      setTimeout(startTimer,1500);
+    }
+
+    function endRound() {
+      submitResponses();
+
+
+      // Disable the input fields and clear their values
+      var inputs = ['tari', 'orase', 'munti', 'ape', 'plante', 'animale', 'nume'];
+      inputs.forEach(function(inputId) {
+      var input = document.getElementById(inputId);
+      input.disabled = true;
+      input.value = '';
+      });
+      setTimeout(startRound, 1000);
+    }
+
+    function endGame() {
+      // Handle the end of the game
+    }
+
+    // Start the first round
+    startRound();
 });
+  
 </script>
 <body>
 <div class="TOMAPAN">
 <b class="item1">Tari</b>
-<input type="text" class="item2" id="tari">
+<input type="text" class="item2" id="tari" disabled>
 <b class="item3"> Orase</b> 
-<input type="text" class="item4" id="orase">
+<input type="text" class="item4" id="orase" disabled>
 <b class="item5">Munti</b>
-<input type="text" class="item6" id="munti">
+<input type="text" class="item6" id="munti" disabled>
 <b class="item7">Ape</b>
-<input type="text" class="item8" id="ape">
+<input type="text" class="item8" id="ape" disabled>
 <b class="item9">Plante</b>
-<input type="text" class="item10" id="plante">
+<input type="text" class="item10" id="plante" disabled>
 <b class="item11">Animale</b>
-<input type="text" class="item12" id="animale">
+<input type="text" class="item12" id="animale" disabled>
 <b class="item13">Nume</b>
-<input type="text" class="item14" id="nume">
+<input type="text" class="item14" id="nume" disabled>
 </div>
 <div class="TOMAPAN-TIMER" id="timer-display">
   <?php echo isset($_SESSION['timer']) ? $_SESSION['timer'] : '0'; ?> 
@@ -91,5 +151,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   <h1>0</h1>
   <p>Score<p>
 </div>
+
+<div id="random-letter"></div>
 </body>
 </html>
