@@ -8,8 +8,15 @@ if(!is_logged_in()){
     exit();
 }
 
-$timerDuration = $_SESSION['timer'];
-$rounds = $_SESSION['rounds'];
+$room_code = $_SESSION['room_code'];
+
+$stmt = $db->prepare("SELECT timer, rounds FROM rooms WHERE code = ?");
+$stmt->execute([$room_code]);
+$game_settings = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$timerDuration = $game_settings['timer'];
+$rounds = $game_settings['rounds'];
+
 ?>
 
 <!DOCTYPE html>
@@ -21,7 +28,36 @@ $rounds = $_SESSION['rounds'];
 
 <script>
 document.addEventListener('DOMContentLoaded', (event) => {
-    let defaultTimerDuration = <?php echo isset($_SESSION['timer']) ? $_SESSION['timer'] : '0'; ?>;
+    fetch('fetch_users.php')
+      .then(response => response.json())
+      .then(data => {
+        let users = data.users
+
+        users.forEach(user => {
+          addUserRow(user);
+        })
+      })
+
+      function addUserRow(user) {
+        let table = document.getElementById('response-table');
+        let row = document.createElement('tr');
+        row.id = 'user-' + user.id;
+        let nameCell = document.createElement('td');
+        nameCell.textContent = user.username;
+        row.appendChild(nameCell);
+
+        let categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
+        categories.forEach(category => {
+        let cell = document.createElement('td');
+        cell.textContent = ''; // No responses yet
+        row.appendChild(cell);
+        });
+
+    
+        table.appendChild(row);
+      }
+
+    let defaultTimerDuration = <?php echo $timerDuration ?>;
     let timerDuration = defaultTimerDuration;
     var countdownElement = document.getElementById('timer-display');
 
@@ -49,32 +85,68 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function submitResponses() {
-      var country = document.getElementById('tari').value;
-      var city = document.getElementById('orase').value;
-      var mountain = document.getElementById('munti').value;
-      var waters =document.getElementById('ape').value;
-      var plants =document.getElementById('plante').value;
-      var animals = document.getElementById('animale').value;
-      var names = document.getElementById('nume').value;
+    var country = document.getElementById('tari').value;
+    var city = document.getElementById('orase').value;
+    var mountain = document.getElementById('munti').value;
+    var waters = document.getElementById('ape').value;
+    var plants = document.getElementById('plante').value;
+    var animals = document.getElementById('animale').value;
+    var names = document.getElementById('nume').value;
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', 'submit_response.php', true);
-
-      var formData = new FormData();
-      formData.append('responses', JSON.stringify ({
-        'country': country,
-        'city': city,
-        'mountain':mountain,
-        'waters':waters,
-        'plants':plants,
-        'animals':animals,
-        'names':names
-      }));
-
-      xhr.send(formData);
+    // update the table
+    var userId = <?php echo $_SESSION['id']; ?>; 
+    var row = document.getElementById('user-' + userId);
+    if (row) {
+        row.children[1].textContent = country;
+        row.children[2].textContent = city;
+        row.children[3].textContent = mountain;
+        row.children[4].textContent = waters;
+        row.children[5].textContent = plants;
+        row.children[6].textContent = animals;
+        row.children[7].textContent = names;
     }
 
-    let roundsRemaining = <?php echo isset($_SESSION['rounds']) ? $_SESSION['rounds'] : '0'; ?>;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'submit_responses.php', true);
+
+    var formData = new FormData();
+    formData.append('responses', JSON.stringify ({
+        'country': country,
+        'city': city,
+        'mountain': mountain,
+        'waters': waters,
+        'plants': plants,
+        'animals': animals,
+        'names': names
+    }));
+
+    xhr.send(formData);
+}
+
+function updateResponses() {
+  fetch('fetch_responses.php')
+    .then(response => response.json())
+    .then(data => {
+      let responses = data.responses;
+
+      responses.forEach(response => {
+        let row = document.getElementById('user-' + response.userId);
+        if (row) {
+          row.children[1].textContent = response.country;
+          row.children[2].textContent = response.city;
+          row.children[3].textContent = response.mountain;
+          row.children[4].textContent = response.waters;
+          row.children[5].textContent = response.plants;
+          row.children[6].textContent = response.animals;
+          row.children[7].textContent = response.names;
+        }
+      })
+    })
+}
+
+  setInterval(updateResponses, defaultTimerDuration/2)
+
+    let roundsRemaining = <?php echo $rounds; ?>;
     let usedLetters = [];
     let currentLetter = '';
 
@@ -97,14 +169,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
 
       generateLetter();
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'create_round.php', true);
+
+      var formData = new FormData();
+      formData.append('room_code', <?php echo json_encode($room_code); ?>);
+  
+      xhr.send(formData);
+
       setTimeout(startTimer,1500);
     }
 
     function endRound() {
       submitResponses();
+      document.getElementById('rounds-display').textContent = roundsRemaining;
+    
 
-
-      // Disable the input fields and clear their values
       var inputs = ['tari', 'orase', 'munti', 'ape', 'plante', 'animale', 'nume'];
       inputs.forEach(function(inputId) {
       var input = document.getElementById(inputId);
@@ -120,6 +201,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     // Start the first round
     startRound();
+
+
 });
   
 </script>
@@ -141,10 +224,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 <input type="text" class="item14" id="nume" disabled>
 </div>
 <div class="TOMAPAN-TIMER" id="timer-display">
-  <?php echo isset($_SESSION['timer']) ? $_SESSION['timer'] : '0'; ?> 
+  <?php echo $timerDuration; ?> 
 </div>
 <div class="TOMAPAN-ROUNDS" id="rounds-display">
-  <?php echo isset($_SESSION['rounds']) ? $_SESSION['rounds'] : '0'; ?> 
+  <?php echo $rounds; ?> 
 </div>
 
 <div class="TOMAPAN-SCORE">
@@ -153,5 +236,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
 </div>
 
 <div id="random-letter"></div>
+
+<table id="response-table">
+    <tr class="response-table-first">
+        <th>User</th>
+        <th>Tari</th>
+        <th>Orase</th>
+        <th>Munti</th>
+        <th>Ape</th>
+        <th>Plante</th>
+        <th>Animale</th>
+        <th>Nume</th>
+    </tr>
+    <!-- The rows for each user will be added here -->
+</table>
+
+
 </body>
 </html>

@@ -24,7 +24,7 @@ if(!is_logged_in()){
 
         <div class="header-right">
             <div class="user-info">
-                <a href="profile.php">
+                <a href="profile.php" id="profilePicture">
                     <?php if(isset($_SESSION['profile_picture'])) { ?>
                         <img src="<?php echo $_SESSION['profile_picture']; ?>" alt="User profile picture">
                     <?php } else { ?>
@@ -44,6 +44,30 @@ if(!is_logged_in()){
         <button onclick="openPopup()" class="button enter-game-btn">Enter a game</button>
     </div>
 </div>
+
+<div class="popup-profile" id="profilePopupOverlay">
+    <div class="popup-container">
+        <span class="popup-close" id="profilePopupClose">&times;</span>
+        <div class="popup-profile-content">
+            <form method="POST" action="profile.php" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="profile_picture">Profile Picture:</label>
+                    <input type="file" name="profile_picture" id="profile_picture">
+                </div>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" id="username">
+                </div>
+                <div class="popup-profile-button-container">
+                    <button class="button-save-changes" type="submit">Save Changes</button>
+                    <button class="button-delete" formaction="delete_profile_picture.php" type="submit">Delete Profile Picture</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 
 <div class="popup-overlay" id="popupOverlay">
     <div class="popup-container">
@@ -79,7 +103,21 @@ enterRoomBtn.addEventListener('click', () => {
 
 popupClose.addEventListener('click', () => {
     popupOverlay.classList.remove('popup-show');
+})
+
+const profilePicture = document.getElementById('profilePicture');
+const profilePopupOverlay = document.getElementById('profilePopupOverlay');
+const profilePopupClose = document.getElementById('profilePopupClose');
+
+profilePicture.addEventListener('click', (e) => {
+    e.preventDefault(); // this line prevents the default behavior of the anchor tag
+    profilePopupOverlay.classList.add('popup-show');
 });
+
+profilePopupClose.addEventListener('click', () => {
+    profilePopupOverlay.classList.remove('popup-show');
+});
+
 
 </script>
 </body>

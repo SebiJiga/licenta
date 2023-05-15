@@ -116,6 +116,7 @@ input[type="text"] {
     margin-bottom: 200px;
 }
 
+
 .button {
  
   font-weight: bold;
@@ -137,6 +138,80 @@ input[type="text"] {
 }
 
 /* Popup styles */
+
+.popup-profile{
+    position: fixed;
+    top: 15%;
+    right: 1%;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.popup-profile-content{
+    margin-top: 10px;
+    padding: 5px 5px;
+}
+
+.popup-profile-container{
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+    position: relative;
+    width: 500px;
+    max-width: 90%;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.button-save-changes, .button-delete {
+    display:inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+.popup-profile-button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.popup-profile label {
+    font-weight: bold;
+}
+
+.button-save-changes {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.button-save-changes:hover {
+    background-color: #45a049;
+}
+
+.button-delete {
+    background-color: #f44336;
+    color: white;
+}
+
+.button-delete:hover {
+    background-color: #da190b;
+} 
+
+
 .popup-overlay {
     position: fixed;
     top: 0;
@@ -152,6 +227,9 @@ input[type="text"] {
     transition: opacity 0.5s ease-in-out;
 }
 
+.popup-overlay label {
+    font-weight: bold;
+}
 .popup-container {
     background-color: #fff;
     padding: 20px;
@@ -174,7 +252,7 @@ input[type="text"] {
 }
 
 .popup-content {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .popup-content input[type="text"] {
@@ -187,7 +265,9 @@ input[type="text"] {
 }
 
 .popup-content button[type="submit"] {
+    align-items:center;
     margin-top: 0;
+    padding: 10px 10px;
     font-size: 16px;
     font-weight: bold;
     text-decoration: none;
@@ -542,4 +622,15 @@ padding:15px;
     padding: 16px 32px;
     pointer-events: none;
     animation: letter-animation 1s ease-in-out;
+}
+
+#response-table {
+    position: absolute;
+    left:6%;
+    top: 30%;
+    font-size:20px;
+}
+
+.response-table-first {
+    font-family: fantasy;
 }

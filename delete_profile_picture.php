@@ -27,6 +27,6 @@ $stmt->execute(['id' => $user_id]);
 
 unset($_SESSION['profile_picture']);
 
-header('Location: profile.php');
+header('Location: index.php');
 exit();
 ?>
