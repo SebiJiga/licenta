@@ -31,6 +31,7 @@ $rounds = $game_settings['rounds'];
 <head>
   <title>TOMAPAN - Game</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
+  <script src="https://cdn.socket.io/3.1.3/socket.io.js"></script>
 </head>
 
 
@@ -90,6 +91,10 @@ $rounds = $game_settings['rounds'];
 
 
   <script>
+
+  var socket = io('http://localhost:3000');
+
+ 
     document.addEventListener('DOMContentLoaded', (event) => {
       let defaultTimerDuration = <?php echo $timerDuration ?> * 1000;
       let timerDuration = defaultTimerDuration / 1000;
@@ -193,6 +198,11 @@ $rounds = $game_settings['rounds'];
               console.log('User not the game creator');
               return;
             }
+
+            socket.emit('roundCreated', {
+              round: response.round,
+              letter: response.letter
+            });
           } else {
             console.error('An error occurred during the transaction');
           }
@@ -202,6 +212,7 @@ $rounds = $game_settings['rounds'];
         formData.append('letter', currentLetter);
         xhr.send(formData);
       }
+
       function startRound() {
         if (currentRound > roundsRemaining) {
           endGame();
@@ -343,7 +354,9 @@ $rounds = $game_settings['rounds'];
       }, waitingCountdownDuration * 1000);
     }
 
-
+    socket.on('startCountdown', () => {
+    startWaitingCountdown();
+    });
 
     let roomCode = '<?php echo $room_code ?>';
     function setGameState(state) {
@@ -374,7 +387,8 @@ $rounds = $game_settings['rounds'];
           switch (data.status) {
             case 'waiting':
               if (lastState !== 'waiting') {
-                startWaitingCountdown();
+                socket.emit('startWaitingCountdown');
+
                 fetchUsers();
                 createRound();
               }
