@@ -15,4 +15,16 @@ function generateRandomCode($length = 8) {
     }
     return $code;
 }
+
+function generateRandomLetter() {
+    static $usedLetters = array();
+
+    do {
+        $letter = chr(65 + rand(0,25));
+    } while (in_array($letter, $usedLetters));
+
+    $usedLetters[] = $letter;
+
+    return $letter;
+}
 ?>

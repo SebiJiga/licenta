@@ -3,16 +3,22 @@ require_once('functions.php');
 require_once('db_connection.php');
 session_start();
 
-if(!is_logged_in()){
-    header('Location: login.php');
-    exit();
+if (!is_logged_in()) {
+  header('Location: login.php');
+  exit();
 }
 
-$room_code = $_SESSION['room_code'];
+if (!isset($_SESSION['room_code'])) {
+  header('Location: login.php');
+  exit();
+} else {
+  $room_code = $_SESSION['room_code'];
+}
 
 $stmt = $db->prepare("SELECT timer, rounds FROM rooms WHERE code = ?");
 $stmt->execute([$room_code]);
 $game_settings = $stmt->fetch(PDO::FETCH_ASSOC);
+
 
 $timerDuration = $game_settings['timer'];
 $rounds = $game_settings['rounds'];
@@ -21,58 +27,137 @@ $rounds = $game_settings['rounds'];
 
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>TOMAPAN - Game</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
-<script>
-document.addEventListener('DOMContentLoaded', (event) => {
-    fetch('fetch_users.php')
-      .then(response => response.json())
-      .then(data => {
-        let users = data.users
 
-        users.forEach(user => {
-          addUserRow(user);
-        })
-      })
+<body>
+  <div class="TOMAPAN">
+    <b class="item1">Tari</b>
+    <input type="text" class="item2" id="tari" disabled>
+    <b class="item3"> Orase</b>
+    <input type="text" class="item4" id="orase" disabled>
+    <b class="item5">Munti</b>
+    <input type="text" class="item6" id="munti" disabled>
+    <b class="item7">Ape</b>
+    <input type="text" class="item8" id="ape" disabled>
+    <b class="item9">Plante</b>
+    <input type="text" class="item10" id="plante" disabled>
+    <b class="item11">Animale</b>
+    <input type="text" class="item12" id="animale" disabled>
+    <b class="item13">Nume</b>
+    <input type="text" class="item14" id="nume" disabled>
+  </div>
+  <div class="TOMAPAN-TIMER" id="timer-display">
+    <?php echo $timerDuration; ?>
+  </div>
+  <div class="TOMAPAN-ROUNDS" id="rounds-display">
+    <?php echo $rounds; ?>
+  </div>
+
+  <div class="TOMAPAN-SCORE">
+    <h1>0</h1>
+    <p>Score
+    <p>
+  </div>
+
+  <div id="loading-spinner" style="display: none;">
+    <div class="loader"></div>
+  </div>
+  <div id="random-letter"></div>
+  <div class="status-text">
+    <b id="status-text"></b>
+  </div>
+  <table id="response-table">
+    <tr class="response-table-first">
+      <th>User</th>
+      <th>Tari</th>
+      <th>Orase</th>
+      <th>Munti</th>
+      <th>Ape</th>
+      <th>Plante</th>
+      <th>Animale</th>
+      <th>Nume</th>
+      <div class="response-table-content">
+    </tr>
+    <!-- The rows for each user will be added here -->'
+    </div>
+  </table>
+
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+      let defaultTimerDuration = <?php echo $timerDuration ?> * 1000;
+      let timerDuration = defaultTimerDuration / 1000;
+
+
+      function fetchUsers() {
+        fetch('fetch_users.php')
+          .then(response => response.json())
+          .then(data => {
+            console.log('Fetched users: ', data.users);
+            data.users.forEach(user => {
+              if (user) {
+                addUserRow(user);
+              } else {
+                console.error("Undefined user encountered in fetchUsers.");
+              }
+            });
+          })
+          .catch(error => console.error('Error fetching users: ', error));
+      }
+
 
       function addUserRow(user) {
+        console.log('addUserRow called with user: ', user);
+        if (!user) {
+          console.error("addUserRow called with undefined user");
+          return;
+        }
         let table = document.getElementById('response-table');
         let row = document.createElement('tr');
         row.id = 'user-' + user.id;
+
         let nameCell = document.createElement('td');
         nameCell.textContent = user.username;
         row.appendChild(nameCell);
 
         let categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
         categories.forEach(category => {
-        let cell = document.createElement('td');
-        cell.textContent = ''; // No responses yet
-        row.appendChild(cell);
+          let cell = document.createElement('td');
+          cell.id = 'user-' + user.id + '-' + category;
+          cell.textContent = ''; // No responses yet
+          row.appendChild(cell);
         });
-
-    
         table.appendChild(row);
       }
 
-    let defaultTimerDuration = <?php echo $timerDuration ?>;
-    let timerDuration = defaultTimerDuration;
-    var countdownElement = document.getElementById('timer-display');
+      function clearUserRows() {
+        let table = document.getElementById('response-table');
+        let rows = table.getElementsByTagName('tr');
+        while (rows.length > 1) {
+          table.removeChild(rows[1]);
+        }
+      }
 
-    var countdown;
-    function startTimer() {
+
+      var countdownElement = document.getElementById('timer-display');
+      var countdown;
+      function startTimer() {
         countdown = setInterval(function () {
-            console.log("In the interval");
-            timerDuration--;
-            countdownElement.innerText = timerDuration;
+          console.log("In the interval");
+          timerDuration--;
+          countdownElement.innerText = timerDuration;
 
-            if(timerDuration <= 0) {
-                clearInterval(countdown);
-                timerDuration = defaultTimerDuration; // Reset the timer
-                endRound();
-            }  
+          if (timerDuration <= 0) {
+            clearInterval(countdown);
+            endRound();
+            setGameState('reviewing')
+          }
         }, 1000);
 
         document.getElementById('tari').disabled = false;
@@ -82,175 +167,245 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.getElementById('plante').disabled = false;
         document.getElementById('animale').disabled = false;
         document.getElementById('nume').disabled = false;
-    }
-
-    function submitResponses() {
-    var country = document.getElementById('tari').value;
-    var city = document.getElementById('orase').value;
-    var mountain = document.getElementById('munti').value;
-    var waters = document.getElementById('ape').value;
-    var plants = document.getElementById('plante').value;
-    var animals = document.getElementById('animale').value;
-    var names = document.getElementById('nume').value;
-
-    // update the table
-    var userId = <?php echo $_SESSION['id']; ?>; 
-    var row = document.getElementById('user-' + userId);
-    if (row) {
-        row.children[1].textContent = country;
-        row.children[2].textContent = city;
-        row.children[3].textContent = mountain;
-        row.children[4].textContent = waters;
-        row.children[5].textContent = plants;
-        row.children[6].textContent = animals;
-        row.children[7].textContent = names;
-    }
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'submit_responses.php', true);
-
-    var formData = new FormData();
-    formData.append('responses', JSON.stringify ({
-        'country': country,
-        'city': city,
-        'mountain': mountain,
-        'waters': waters,
-        'plants': plants,
-        'animals': animals,
-        'names': names
-    }));
-
-    xhr.send(formData);
-}
-
-function updateResponses() {
-  fetch('fetch_responses.php')
-    .then(response => response.json())
-    .then(data => {
-      let responses = data.responses;
-
-      responses.forEach(response => {
-        let row = document.getElementById('user-' + response.userId);
-        if (row) {
-          row.children[1].textContent = response.country;
-          row.children[2].textContent = response.city;
-          row.children[3].textContent = response.mountain;
-          row.children[4].textContent = response.waters;
-          row.children[5].textContent = response.plants;
-          row.children[6].textContent = response.animals;
-          row.children[7].textContent = response.names;
-        }
-      })
-    })
-}
-
-  setInterval(updateResponses, defaultTimerDuration/2)
-
-    let roundsRemaining = <?php echo $rounds; ?>;
-    let usedLetters = [];
-    let currentLetter = '';
-
-    function generateLetter() {
-      let letter;
-      do {
-        letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-      } while (usedLetters.includes(letter));
-
-      usedLetters.push(letter);
-      currentLetter = letter;
-      document.getElementById('random-letter').textContent = currentLetter;
-    }
-    
-    function startRound() {
-      roundsRemaining--;
-      if (roundsRemaining < 0) {
-        endGame();
-        return;
       }
 
-      generateLetter();
+      let roundsRemaining = <?php echo $rounds; ?>;
+      var countdownRounds = document.getElementById('rounds-display');
+      let roundsToDisplay = roundsRemaining;
+      let currentLetter = '';
 
+
+      let currentRound = 1;
+
+      function createRound() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'create_round.php', true);
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            if (response.error && response.error === 'Maximum rounds reached') {
+              // handle maximum rounds reached
+              alert('Maximum rounds reached');
+              return;
+            }
+            if (response.message && response.message === 'User not the game creator') {
+              // Handle when user is not the game creator
+              console.log('User not the game creator');
+              return;
+            }
+          } else {
+            console.error('An error occurred during the transaction');
+          }
+        };
+        var formData = new FormData();
+        formData.append('room_code', <?php echo json_encode($room_code); ?>);
+        formData.append('letter', currentLetter);
+        xhr.send(formData);
+      }
+      function startRound() {
+        if (currentRound > roundsRemaining) {
+          endGame();
+          return;
+      }
+
+      fetchLetter();
+      setTimeout(startTimer, 1500);
+      currentRound++;
+    }
+
+    function fetchLetter() {
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', 'create_round.php', true);
+      xhr.open('POST', 'fetch_round.php', true);
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          var response = JSON.parse(xhr.responseText);
+          if (response.letter) {
+            currentLetter = response.letter;
+            var letterElement = document.getElementById('random-letter');
+            var parent = letterElement.parentNode;
+            var clone = letterElement.cloneNode(true);
+            clone.textContent = response.letter;
+            parent.removeChild(letterElement);
+            parent.appendChild(clone);
+
+            document.getElementById('loading-spinner').style.display = 'none'; // Hide the loading spinner
+          }
+        } else {
+          console.error('An error occurred during the transaction');
+        }
+      };
 
       var formData = new FormData();
       formData.append('room_code', <?php echo json_encode($room_code); ?>);
-  
       xhr.send(formData);
-
-      setTimeout(startTimer,1500);
     }
 
     function endRound() {
       submitResponses();
       document.getElementById('rounds-display').textContent = roundsRemaining;
-    
-
       var inputs = ['tari', 'orase', 'munti', 'ape', 'plante', 'animale', 'nume'];
-      inputs.forEach(function(inputId) {
-      var input = document.getElementById(inputId);
-      input.disabled = true;
-      input.value = '';
+      inputs.forEach(function (inputId) {
+        var input = document.getElementById(inputId);
+        input.disabled = true;
+        input.value = '';
       });
-      setTimeout(startRound, 1000);
+
+      roundsToDisplay--;
+      countdownRounds.innerText = roundsToDisplay;
+    }
+
+    function submitResponses() {
+
+      var country = document.getElementById('tari').value;
+      var city = document.getElementById('orase').value;
+      var mountain = document.getElementById('munti').value;
+      var waters = document.getElementById('ape').value;
+      var plants = document.getElementById('plante').value;
+      var animals = document.getElementById('animale').value;
+      var names = document.getElementById('nume').value;
+
+      // update the table
+      fetch('submit_responses.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          room_code: <?php echo json_encode($room_code); ?>,
+          round_number: currentRound - 1,
+          responses: {
+          country: country,
+          city: city,
+          mountain: mountain,
+          waters: waters,
+          plants: plants,
+          animals: animals,
+          names: names
+        }
+  }),
+})
+  .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      });
+}
+
+    function updateResponses() {
+      fetch('fetch_responses.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ round_number: currentRound - 1 }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          let responses = data.responses;
+
+          responses.forEach(response => {
+            let categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
+            categories.forEach(category => {
+              let cell = document.getElementById('user-' + response.user_id + '-' + category);
+              if (cell) {
+                console.log(`Updating cell for user ${response.user_id} and category ${category}`);
+                cell.textContent = response[category];
+              } else {
+                console.error(`Cell for user ${response.user_id} and category ${category} not found`);
+              }
+            });
+          });
+        });
     }
 
     function endGame() {
       // Handle the end of the game
     }
 
-    // Start the first round
-    startRound();
+    let waitingCountdownDuration = 10;
+    let waitingCountdown;
+    let isCountdownStarted = false;
 
 
-});
-  
-</script>
-<body>
-<div class="TOMAPAN">
-<b class="item1">Tari</b>
-<input type="text" class="item2" id="tari" disabled>
-<b class="item3"> Orase</b> 
-<input type="text" class="item4" id="orase" disabled>
-<b class="item5">Munti</b>
-<input type="text" class="item6" id="munti" disabled>
-<b class="item7">Ape</b>
-<input type="text" class="item8" id="ape" disabled>
-<b class="item9">Plante</b>
-<input type="text" class="item10" id="plante" disabled>
-<b class="item11">Animale</b>
-<input type="text" class="item12" id="animale" disabled>
-<b class="item13">Nume</b>
-<input type="text" class="item14" id="nume" disabled>
-</div>
-<div class="TOMAPAN-TIMER" id="timer-display">
-  <?php echo $timerDuration; ?> 
-</div>
-<div class="TOMAPAN-ROUNDS" id="rounds-display">
-  <?php echo $rounds; ?> 
-</div>
+    function startWaitingCountdown() {
+      isCountdownStarted = true;
+      waitingCountdown = setInterval(() => {
+        document.getElementById('status-text').textContent = "The game will start in " + waitingCountdownDuration + " seconds. Prepare yourself!";
+        if (waitingCountdownDuration <= 0) {
+          clearInterval(waitingCountdown);
+          document.getElementById('status-text').textContent = 'The game is now in progress! Hurry up and fill the boxes with your responses!';
+        } else {
+          waitingCountdownDuration--;
+        }
+      }, 1000);
 
-<div class="TOMAPAN-SCORE">
-  <h1>0</h1>
-  <p>Score<p>
-</div>
-
-<div id="random-letter"></div>
-
-<table id="response-table">
-    <tr class="response-table-first">
-        <th>User</th>
-        <th>Tari</th>
-        <th>Orase</th>
-        <th>Munti</th>
-        <th>Ape</th>
-        <th>Plante</th>
-        <th>Animale</th>
-        <th>Nume</th>
-    </tr>
-    <!-- The rows for each user will be added here -->
-</table>
+      setTimeout(() => {
+        setGameState('playing');
+      }, waitingCountdownDuration * 1000);
+    }
 
 
+
+    let roomCode = '<?php echo $room_code ?>';
+    function setGameState(state) {
+      let formData = new FormData();
+      formData.append('room_code', roomCode);
+      formData.append('status', state);
+
+      fetch('set_game_state.php', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.succes) {
+            console.log(data.succes);
+          } else {
+            console.error(data.error);
+          }
+        })
+    }
+
+    let lastState = null;
+    function checkGameState() {
+      fetch('get_game_state.php')
+        .then(response => response.json())
+        .then(data => {
+          const statusText = document.getElementById('status-text');
+          switch (data.status) {
+            case 'waiting':
+              if (lastState !== 'waiting') {
+                startWaitingCountdown();
+                fetchUsers();
+                createRound();
+              }
+              break;
+
+            case 'playing':
+              if (lastState !== 'playing') {
+                startRound();
+              }
+              break;
+
+            case 'reviewing':
+              if (lastState !== 'reviewing') {
+                statusText.textContent = 'Reviewing the results...';
+                // disable inputs and show responses
+                endRound();
+              }
+              break;
+          }
+          lastState = data.status;
+
+
+        });
+      setTimeout(checkGameState, 3000);
+    }
+
+    checkGameState();
+    });
+
+
+  </script>
 </body>
+
 </html>

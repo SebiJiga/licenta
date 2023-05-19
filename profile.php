@@ -1,15 +1,15 @@
-<?php 
+<?php
 require_once 'db_connection.php';
 require_once 'functions.php';
 
-session_start(); 
+session_start();
 
-if(!is_logged_in()){
+if (!is_logged_in()) {
     header('Location: login.php');
     exit();
 }
 
-if($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //update username if new username is provided
     if (!empty($_POST['username'])) {
         $username = trim($_POST['username']);
@@ -19,7 +19,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['username'] = $username;
     }
 
-    if(!empty($_FILES['profile_picture']['name'])) {
+    if (!empty($_FILES['profile_picture']['name'])) {
         $user_id = $_SESSION['id'];
         $image_name = $_FILES['profile_picture']['name'];
         $image_size = $_FILES['profile_picture']['size'];
@@ -29,7 +29,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
 
 
-        if(!in_array($image_ext, $allowed_extensions)) {
+        if (!in_array($image_ext, $allowed_extensions)) {
             $error = 'Invalid file type. Please choose a JPG, JPEG, PNG, or GIF file.';
         } elseif ($image_size > 5000000) {
             $error = 'File size too large. Please choose a file smaller than 5MB.';
@@ -37,7 +37,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!file_exists('uploads')) {
                 mkdir('uploads');
             }
-            
+
             $image_path = __DIR__ . '/uploads/' . $user_id . '.' . $image_ext;
             move_uploaded_file($image_tmp, $image_path);
 
@@ -48,9 +48,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         }
     }
-     
-     header('Location: index.php');
-     exit;
+
+    header('Location: index.php');
+    exit;
 }
 ?>
-

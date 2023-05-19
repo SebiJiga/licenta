@@ -2,9 +2,9 @@
 require_once 'db_connection.php';
 require_once 'functions.php';
 
-session_start(); 
+session_start();
 
-if(!is_logged_in()){
+if (!is_logged_in()) {
     header('Location: login.php');
     exit();
 }
