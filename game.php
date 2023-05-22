@@ -91,11 +91,15 @@ $rounds = $game_settings['rounds'];
 
 
   <script>
-
-  var socket = io('http://localhost:3000');
-
- 
     document.addEventListener('DOMContentLoaded', (event) => {
+      var socket = io('http://localhost:3000');
+
+
+      socket.on('fetchCorrectResponses', () => {
+        console.log("It works");
+        updateResponses();
+        scores();
+      });
       let defaultTimerDuration = <?php echo $timerDuration ?> * 1000;
       let timerDuration = defaultTimerDuration / 1000;
 
@@ -209,14 +213,14 @@ $rounds = $game_settings['rounds'];
         };
         var formData = new FormData();
         formData.append('room_code', <?php echo json_encode($room_code); ?>);
-        formData.append('letter', currentLetter);
-        xhr.send(formData);
+    formData.append('letter', currentLetter);
+    xhr.send(formData);
       }
 
-      function startRound() {
-        if (currentRound > roundsRemaining) {
-          endGame();
-          return;
+    function startRound() {
+      if (currentRound > roundsRemaining) {
+        endGame();
+        return;
       }
 
       fetchLetter();
@@ -253,7 +257,13 @@ $rounds = $game_settings['rounds'];
 
     function endRound() {
       submitResponses();
-      document.getElementById('rounds-display').textContent = roundsRemaining;
+
+      roundsToDisplay--;
+
+      countdownRounds.innerText = roundsToDisplay;
+      document.getElementById('rounds-display').textContent = roundsToDisplay;
+
+
       var inputs = ['tari', 'orase', 'munti', 'ape', 'plante', 'animale', 'nume'];
       inputs.forEach(function (inputId) {
         var input = document.getElementById(inputId);
@@ -261,8 +271,11 @@ $rounds = $game_settings['rounds'];
         input.value = '';
       });
 
-      roundsToDisplay--;
-      countdownRounds.innerText = roundsToDisplay;
+      if (roundsToDisplay === 0) {
+        endGame();
+      }
+
+
     }
 
     function submitResponses() {
@@ -298,11 +311,14 @@ $rounds = $game_settings['rounds'];
   .then(response => response.json())
       .then(data => {
         console.log('Success:', data);
+        socket.emit('responsesSaved');
       });
 }
 
     function updateResponses() {
+
       fetch('fetch_responses.php', {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -327,6 +343,28 @@ $rounds = $game_settings['rounds'];
           });
         });
     }
+
+    function scores() {
+      fetch('correct_responses.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          round_number: currentRound,
+          room_code: roomCode
+        }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        });
+    }
+
+    socket.on('confirmationReceived', () => {
+      console.log('Server received responsesSaved event');
+    });
+
 
     function endGame() {
       // Handle the end of the game
@@ -355,7 +393,7 @@ $rounds = $game_settings['rounds'];
     }
 
     socket.on('startCountdown', () => {
-    startWaitingCountdown();
+      startWaitingCountdown();
     });
 
     let roomCode = '<?php echo $room_code ?>';
@@ -377,6 +415,12 @@ $rounds = $game_settings['rounds'];
           }
         })
     }
+
+    socket.on('fetchCorrectResponses', () => {
+      console.log("it works");
+      //updateResponses();
+      //scores();
+    });
 
     let lastState = null;
     function checkGameState() {
@@ -403,8 +447,8 @@ $rounds = $game_settings['rounds'];
             case 'reviewing':
               if (lastState !== 'reviewing') {
                 statusText.textContent = 'Reviewing the results...';
-                // disable inputs and show responses
-                endRound();
+
+
               }
               break;
           }

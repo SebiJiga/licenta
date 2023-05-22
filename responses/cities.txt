@@ -1,0 +1,180 @@
+București
+Cluj-Napoca
+Timișoara
+Iași
+Constanța
+Craiova
+Galați
+Brașov
+Ploiești
+Oradea
+Brăila
+Arad
+Pitești
+Sibiu
+Bacău
+Târgu-Mureș
+Baia Mare
+Buzău
+Satu Mare
+Botoșani
+Râmnicu Vâlcea
+Suceava
+Piatra Neamț
+Drobeta-Turnu Severin
+Târgu Jiu
+Focșani
+Tulcea
+Reșița
+Slatina
+Vaslui
+Hunedoara
+Giurgiu
+Roman
+Bârlad
+Deva
+Alba Iulia
+Zalău
+Sfântu Gheorghe
+Turda
+Mediaș
+Slobozia
+Alexandria
+Petroșani
+Lugoj
+Pașcani
+Miercurea Ciuc
+Tecuci
+Caracal
+Făgăraș
+Năvodari
+Câmpina
+Carei
+Sebeș
+Bistrița
+Reghin
+Sighetu Marmației
+Mangalia
+Dej
+Odorheiu Secuiesc
+Reșița
+Călărași
+Beiuș
+Curtea de Argeș
+Târgoviște
+Lupeni
+Vulcan
+Dorohoi
+Găești
+Buftea
+Moreni
+Săcele
+Buhuși
+Mizil
+Avrig
+Băicoi
+Șimleu Silvaniei
+Zărnești
+Negrești-Oaș
+Gheorgheni
+Râșnov
+Tokyo
+Delhi
+Shanghai
+São Paulo
+Mumbai
+Beijing
+Cairo
+Dhaka
+Ciudad de México
+Osaka
+Karachi
+Chongqing
+Istanbul
+Buenos Aires
+Kolkata
+Lagos
+Kinshasa
+Manila
+Rio de Janeiro
+Guangzhou
+Los Angeles
+Shenzhen
+Moscova
+Lahore
+Bangalore
+Bangkok
+Kolkata
+New York City
+Londra
+Chengdu
+Nairobi
+Ho Chi Minh City
+Teheran
+Hong Kong
+Ahmedabad
+Kuala Lumpur
+Paris
+Bogotá
+Riyadh
+Santiago
+Alexandria
+Sydney
+Wuhan
+Lima
+Bagdad
+Hyderabad
+Al-Khobar
+Johannesburg
+Chennai
+Kuala Lumpur
+Ahmedabad
+Jakarta
+Bangalore
+Houston
+Toronto
+Istanbul
+Frankfurt
+Miami
+Varșovia
+Johannesburg
+Cairo
+Riyadh
+Melbourne
+Nairobi
+Casablanca
+Kuala Lumpur
+Teheran
+Addis Ababa
+Auckland
+Riyadh
+Mumbai
+Jakarta
+München
+Copenhaga
+Abu Dhabi
+Roma
+Brisbane
+Rio de Janeiro
+Vancouver
+Barcelona
+Ho Chi Minh City
+Osaka
+Riyadh
+Praga
+Budapesta
+Kiev
+Cape Town
+Atena
+Lisabona
+Caracas
+Kuwait City
+Helsinki
+Varșovia
+Bogotá
+Doha
+Hamburg
+Bruxelles
+San Francisco
+Madrid
+Zurich

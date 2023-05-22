@@ -30,6 +30,11 @@ io.on('connection', (socket) => {
   socket.on('roundCreated', (data) => {
     io.emit('roundCreated', data);
   });
+
+  socket.on('responsesSaved', () => {
+    io.emit('fetchCorrectResponses');
+     
+  });
 });
 
 server.listen(3000, () => {

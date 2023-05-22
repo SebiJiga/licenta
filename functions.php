@@ -27,4 +27,17 @@ function generateRandomLetter() {
 
     return $letter;
 }
+
+function getCorrectAnswers($db, $category, $letter) {
+    $stmt = $db->prepare('SELECT word FROM correct_responses WHERE category = ? AND word LIKE ?');
+    $stmt->execute([$category, $letter . '%']);
+
+    $correctAnswers = [];
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $correctAnswers[] = $row['word'];
+    }
+
+    return $correctAnswers;
+}
 ?>
+

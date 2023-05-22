@@ -21,5 +21,8 @@ $statement = $db->prepare($query);
 $statement->execute([':room_code' => $room_code, ':round_number' => $round_number]);
 
 $responses = $statement->fetchAll(PDO::FETCH_ASSOC);
-echo json_encode(['responses' => $responses]);
+echo json_encode([
+    'responses' => $responses,
+    'roundNumber' => $round_number
+]);
 ?>

@@ -24,7 +24,7 @@ if ($stmt->rowCount() > 0) {
 // Insert the new response
 $query = "INSERT INTO responses (user_id, room_code, country, city, mountain, waters, plants, animals, names, round_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt = $db->prepare($query);
-$stmt->execute([$_SESSION['id'], $room_code, $responses['country'], $responses['city'], $responses['mountain'], $responses['waters'], $responses['plants'], $responses['animals'], $responses['names'], $round_number]);
+$stmt->execute([$user_id, $room_code, $responses['country'], $responses['city'], $responses['mountain'], $responses['waters'], $responses['plants'], $responses['animals'], $responses['names'], $round_number]);
 //set game status to 'reviewing'
 $stmt = $db->prepare("UPDATE rooms SET status = 'reviewing' WHERE code = ?");
 $stmt->execute([$room_code]);
