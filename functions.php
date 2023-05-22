@@ -39,5 +39,11 @@ function getCorrectAnswers($db, $category, $letter) {
 
     return $correctAnswers;
 }
+
+function normalize($string) {
+    $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+    $string = strtolower($string);
+    return $string;
+}
 ?>
 

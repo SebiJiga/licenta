@@ -98,8 +98,12 @@ $rounds = $game_settings['rounds'];
       socket.on('fetchCorrectResponses', () => {
         console.log("It works");
         updateResponses();
-        scores();
       });
+
+      socket.on('fetchScore', () => {
+        console.log("Scores fetched");
+        scores();
+      })
       let defaultTimerDuration = <?php echo $timerDuration ?> * 1000;
       let timerDuration = defaultTimerDuration / 1000;
 
@@ -341,6 +345,8 @@ $rounds = $game_settings['rounds'];
               }
             });
           });
+
+        socket.emit('responsesUpdated');
         });
     }
 
@@ -351,8 +357,8 @@ $rounds = $game_settings['rounds'];
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          round_number: currentRound,
-          room_code: roomCode
+          room_code: <?php echo json_encode($room_code); ?>,
+          round_number: currentRound - 1,
         }),
       })
         .then(response => response.json())
@@ -370,7 +376,7 @@ $rounds = $game_settings['rounds'];
       // Handle the end of the game
     }
 
-    let waitingCountdownDuration = 10;
+    let waitingCountdownDuration = 5;
     let waitingCountdown;
     let isCountdownStarted = false;
 

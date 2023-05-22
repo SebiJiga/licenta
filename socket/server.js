@@ -31,9 +31,15 @@ io.on('connection', (socket) => {
     io.emit('roundCreated', data);
   });
 
+  //handle "submit responses"
   socket.on('responsesSaved', () => {
     io.emit('fetchCorrectResponses');
      
+  });
+
+  //handle update the score 
+  socket.on('responsesUpdated', () => {
+    io.emit('fetchScore');
   });
 });
 

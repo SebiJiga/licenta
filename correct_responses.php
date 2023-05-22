@@ -32,46 +32,53 @@ while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
         'animals' => $row['animals'],
         'names' => $row['names']
     ];
+    
 }
-
 echo json_encode($responsesArray);
+
 
 $categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
 
-foreach($categories as $category) {
-    $correctAnswers = getCorrectAnswers($db, $category, $letter);
-}
-
 $score = 0;
 $scoreForResponse = 0;
+
 foreach($responsesArray as $userId => $responses) {
-    foreach($responses as $category => $response) {
-        if(empty($response)) {
+    foreach($categories as $category) {
+        $correctAnswers = getCorrectAnswers($db, $category, $letter);
+        $normalizedCorrectAnswers = array_map('normalize', $correctAnswers);
+
+        $response = isset($responses[$category]) ? $responses[$category] : '';
+        $normalizedResponse = normalize($response);
+
+        if(empty($normalizedResponse)) {
             $scoreForResponse = 0;
         } else {
-            if(in_array($response, $correctAnswers)) {
+            if(in_array($normalizedResponse, $normalizedCorrectAnswers)) {
                 $scoreForResponse = 5;
             }
 
-            $unique = true;
-            foreach($responsesArray as $otherUserId => $otherResponses) {
-                if($otherUserId != $userId && $otherResponses[$category] == $response) {
-                    $unique = false;
-                    break;
-                }
-            }
-            if($unique) {
-                $scoreForResponse += 5;
-            }
+            // $unique = true;
+            // foreach($responsesArray as $otherUserId => $otherResponses) {
+            //     if($otherUserId != $userId && $otherResponses[$category] == $normalizedResponse) {
+            //         $unique = false;
+            //         break;
+            //     }
+            // }
+            // if($unique) {
+            //     $scoreForResponse += 5;
+            // }
         }
+
         $score += $scoreForResponse;
-  // Display the response and score for this response
-  echo "User $userId's response for $category: $response. Score for this response: $scoreForResponse\n";
-}
-// Display the total score for this user
-echo "User $userId's total score: $score\n";
-// Reset the score for the next user
-$score = 0;
+        
+        // Display the response and score for this response
+        echo "User $userId's response for $category: " . $responses[$category] . ". Score for this response: $scoreForResponse\n";
+        $scoreForResponse = 0;
+    }
+    // Display the total score for this user
+    echo "User $userId's total score: $score\n";
+    // Reset the score for the next user
+    $score = 0;
 }
 
 

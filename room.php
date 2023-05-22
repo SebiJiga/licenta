@@ -128,10 +128,10 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
             <label for="timer">(seconds)</label>
             <select class="timer-settings" id="timer">
                 <option value ="10">10</option>
+                <option value ="20">20</option>
                 <option value="60">60</option>
                 <option value="120">120</option>
                 <option value="180">180</option>
-                <option value="99999">a lot</option>
             </select>
         </div>
 
