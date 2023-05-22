@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once 'functions.php';
 require_once 'db_connection.php';
 session_start();
@@ -46,10 +50,15 @@ foreach($responsesArray as $userId => $responses) {
     foreach($categories as $category) {
         $correctAnswers = getCorrectAnswers($db, $category, $letter);
         $normalizedCorrectAnswers = array_map('normalize', $correctAnswers);
+        $normalizedCorrectAnswers = array_map('removePrefixes', $normalizedCorrectAnswers);
+        var_dump($correctAnswers);
 
-        $response = isset($responses[$category]) ? $responses[$category] : '';
-        $normalizedResponse = normalize($response);
-
+        if(isset($responses[$category])) {
+            $normalizedResponse = normalize($responses[$category]);
+            $normalizedResponse = removePrefixes($normalizedResponse);
+        } else {
+            $normalizedResponse = '';
+        }
         if(empty($normalizedResponse)) {
             $scoreForResponse = 0;
         } else {

@@ -1,7 +1,7 @@
 <?php
 require_once '../db_connection.php';
 
-$file = fopen('plants.txt', 'r');
+$file = fopen('mountains.txt', 'r');
 
 while (!feof($file)) {
     $line = fgets($file);
@@ -15,7 +15,7 @@ while (!feof($file)) {
 
         if ($count == 0) {
             $stmt = $db->prepare('INSERT INTO correct_responses (category, word) VALUES (?, ?)');
-            $stmt->execute(['plants', $country]);
+            $stmt->execute(['mountain', $country]);
         }
     }
 }
