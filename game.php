@@ -60,9 +60,8 @@ $rounds = $game_settings['rounds'];
   </div>
 
   <div class="TOMAPAN-SCORE">
-    <h1>0</h1>
-    <p>Score
-    <p>
+    <h1 id="total-game-score">0</h1>
+    <p>Score<p>
   </div>
 
   <div id="loading-spinner" style="display: none;">
@@ -82,6 +81,7 @@ $rounds = $game_settings['rounds'];
       <th>Plante</th>
       <th>Animale</th>
       <th>Nume</th>
+      <th>Scor</th>
       <div class="response-table-content">
     </tr>
     <!-- The rows for each user will be added here -->'
@@ -146,6 +146,13 @@ $rounds = $game_settings['rounds'];
           cell.textContent = ''; // No responses yet
           row.appendChild(cell);
         });
+
+        let totalScoreCell = document.createElement('td');
+        totalScoreCell.id = 'user-' + user.id + '-total-score';
+        totalScoreCell.className = 'table-score';
+        totalScoreCell.textContent = '';
+        row.appendChild(totalScoreCell);
+
         table.appendChild(row);
       }
 
@@ -292,7 +299,6 @@ $rounds = $game_settings['rounds'];
       var animals = document.getElementById('animale').value;
       var names = document.getElementById('nume').value;
 
-      // update the table
       fetch('submit_responses.php', {
         method: 'POST',
         headers: {
@@ -346,9 +352,11 @@ $rounds = $game_settings['rounds'];
             });
           });
 
-        socket.emit('responsesUpdated');
+          socket.emit('responsesUpdated');
         });
     }
+
+    let totalGameScore = 0;
 
     function scores() {
       fetch('correct_responses.php', {
@@ -361,10 +369,32 @@ $rounds = $game_settings['rounds'];
           round_number: currentRound - 1,
         }),
       })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        Object.entries(data).forEach(([userId, userScore]) => {
+          let categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
+          categories.forEach(category => {
+            let cell = document.getElementById('user-' + userId + '-' + category);
+            if (cell) {
+              console.log(`Updating cell for user ${userId} and category ${category}`);
+              cell.textContent = userScore[category].response + ' (' + userScore[category].score + ')';
+            } else {
+              console.error(`Cell for user ${userId} and category ${category} not found`);
+            }
+          });
+
+          let totalScoreCell = document.getElementById('user-' + userId + '-total-score');
+          if (totalScoreCell) {
+            totalScoreCell.textContent = userScore['total'];
+          } else {
+            console.error(`Total score cell for user ${userId} not found`);
+          }
+
+          totalGameScore += userScore['total'];
+          document.getElementById('total-game-score').textContent = totalGameScore;
         });
+      });
     }
 
     socket.on('confirmationReceived', () => {

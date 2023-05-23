@@ -631,11 +631,11 @@ padding:15px;
     position: absolute;
     left:3%;
     top: 30%;
-    font-size:3rem;
+    font-size:2.5rem;
 }
 
 .response-table-content {
-    font-size:2rem;
+    font-size:1.5rem;
     font-family:Georgia, 'Times New Roman', Times, serif;
 
 }
@@ -670,3 +670,8 @@ padding:15px;
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+.table-score {
+    font-weight: bold;
+    color:#3e8e41; 
+}

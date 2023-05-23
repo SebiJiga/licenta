@@ -1,8 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require_once 'functions.php';
 require_once 'db_connection.php';
 session_start();
@@ -11,6 +7,7 @@ if (!is_logged_in() || !isset($_SESSION['room_code'])) {
     echo json_encode(['error' => 'User not logged in or room code not set']);
     exit;
 }
+
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -38,8 +35,7 @@ while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
     ];
     
 }
-echo json_encode($responsesArray);
-
+$scoresArray = []; // Add this line at the beginning
 
 $categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
 
@@ -47,11 +43,11 @@ $score = 0;
 $scoreForResponse = 0;
 
 foreach($responsesArray as $userId => $responses) {
+    $userScore = []; 
     foreach($categories as $category) {
         $correctAnswers = getCorrectAnswers($db, $category, $letter);
         $normalizedCorrectAnswers = array_map('normalize', $correctAnswers);
         $normalizedCorrectAnswers = array_map('removePrefixes', $normalizedCorrectAnswers);
-        var_dump($correctAnswers);
 
         if(isset($responses[$category])) {
             $normalizedResponse = normalize($responses[$category]);
@@ -62,33 +58,40 @@ foreach($responsesArray as $userId => $responses) {
         if(empty($normalizedResponse)) {
             $scoreForResponse = 0;
         } else {
+            $unique=true;
             if(in_array($normalizedResponse, $normalizedCorrectAnswers)) {
                 $scoreForResponse = 5;
-            }
 
-            // $unique = true;
-            // foreach($responsesArray as $otherUserId => $otherResponses) {
-            //     if($otherUserId != $userId && $otherResponses[$category] == $normalizedResponse) {
-            //         $unique = false;
-            //         break;
-            //     }
-            // }
-            // if($unique) {
-            //     $scoreForResponse += 5;
-            // }
+                foreach($responsesArray as $otherUserId => $otherResponses) {
+                    if($otherUserId != $userId && normalize(removePrefixes($otherResponses[$category])) == $normalizedResponse) {
+                        $unique = false;
+                        break;
+                    }
+                }
+
+                if($unique) {
+                    $scoreForResponse += 5;
+                }
+            }
         }
 
         $score += $scoreForResponse;
         
-        // Display the response and score for this response
-        echo "User $userId's response for $category: " . $responses[$category] . ". Score for this response: $scoreForResponse\n";
+        $userScore[$category] = $scoreForResponse;
         $scoreForResponse = 0;
     }
-    // Display the total score for this user
-    echo "User $userId's total score: $score\n";
-    // Reset the score for the next user
+    $userScore['total'] = $score; 
+    $scoresArray[$userId] = $userScore; 
     $score = 0;
 }
 
+$finalArray = [];
+foreach($responsesArray as $userId => $responses) {
+    $userScore = $scoresArray[$userId];
+    foreach ($responses as $category => $response) {
+        $finalArray[$userId][$category] = ["response" => $response, "score" => $userScore[$category]];
+    }
+    $finalArray[$userId]['total'] = $userScore['total'];
+}
 
-?>
+echo json_encode($finalArray);
