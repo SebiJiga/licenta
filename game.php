@@ -31,7 +31,7 @@ $rounds = $game_settings['rounds'];
 <head>
   <title>TOMAPAN - Game</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
-  <script src="https://cdn.socket.io/3.1.3/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.js"></script>
 </head>
 
 
@@ -61,7 +61,8 @@ $rounds = $game_settings['rounds'];
 
   <div class="TOMAPAN-SCORE">
     <h1 id="total-game-score">0</h1>
-    <p>Score<p>
+    <p>Score
+    <p>
   </div>
 
   <div id="loading-spinner" style="display: none;">
@@ -94,7 +95,6 @@ $rounds = $game_settings['rounds'];
     document.addEventListener('DOMContentLoaded', (event) => {
       var socket = io('http://localhost:3000');
 
-
       socket.on('fetchCorrectResponses', () => {
         console.log("It works");
         updateResponses();
@@ -103,7 +103,31 @@ $rounds = $game_settings['rounds'];
       socket.on('fetchScore', () => {
         console.log("Scores fetched");
         scores();
-      })
+      });
+
+      socket.on('startRoundCountdown', (data) => {
+        let countdownTime = data.countdownTime;
+
+        let countdownInterval = setInterval(() => {
+          countdownTime--;
+
+          console.log(`Time remaining: ${countdownTime} seconds`);
+
+          document.getElementById('status-text').textContent = `Next round will start in ${countdownTime} seconds...`;
+
+          if (countdownTime <= 0) {
+            clearInterval(countdownInterval);
+            console.log("Next round started");
+
+            if (currentRound <= roundsRemaining) {
+              createRound();
+            }
+            startWaitingCountdown();
+          }
+        }, 1000);
+      });
+
+
       let defaultTimerDuration = <?php echo $timerDuration ?> * 1000;
       let timerDuration = defaultTimerDuration / 1000;
 
@@ -285,7 +309,7 @@ $rounds = $game_settings['rounds'];
       if (roundsToDisplay === 0) {
         endGame();
       }
-
+      timerDuration = defaultTimerDuration / 1000;
 
     }
 
@@ -370,7 +394,7 @@ $rounds = $game_settings['rounds'];
         }),
       })
     .then(response => response.json())
-    .then(data => {
+      .then(data => {
         console.log(data);
         Object.entries(data).forEach(([userId, userScore]) => {
           let categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
@@ -393,13 +417,17 @@ $rounds = $game_settings['rounds'];
 
           totalGameScore += userScore['total'];
           document.getElementById('total-game-score').textContent = totalGameScore;
+
+          setTimeout(() => {
+            socket.emit('startNextRound');
+            console.log('startNextRound socket called');
+          }, 10 * 1000);
         });
       });
     }
 
-    socket.on('confirmationReceived', () => {
-      console.log('Server received responsesSaved event');
-    });
+
+
 
 
     function endGame() {
@@ -418,6 +446,10 @@ $rounds = $game_settings['rounds'];
         if (waitingCountdownDuration <= 0) {
           clearInterval(waitingCountdown);
           document.getElementById('status-text').textContent = 'The game is now in progress! Hurry up and fill the boxes with your responses!';
+
+          waitingCountdownDuration = 5;
+          isCountdownStarted = false;
+
         } else {
           waitingCountdownDuration--;
         }
@@ -425,12 +457,14 @@ $rounds = $game_settings['rounds'];
 
       setTimeout(() => {
         setGameState('playing');
+
       }, waitingCountdownDuration * 1000);
     }
 
     socket.on('startCountdown', () => {
       startWaitingCountdown();
     });
+
 
     let roomCode = '<?php echo $room_code ?>';
     function setGameState(state) {

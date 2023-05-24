@@ -41,7 +41,7 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
 <head>
     <title>TOMAPAN</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-
+    <script src="https://cdn.socket.io/4.6.1/socket.io.js"></script>
 </head>
 
 
@@ -127,34 +127,31 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
             <label for="timer">Round timer</label>
             <label for="timer">(seconds)</label>
             <select class="timer-settings" id="timer">
-                <option value ="10">10</option>
-                <option value ="20">20</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
                 <option value="60">60</option>
                 <option value="120">120</option>
                 <option value="180">180</option>
             </select>
         </div>
 
-        <div class="rounds"> 
+        <div class="rounds">
             <label for="rounds">Number of rounds:</label>
             <select class="rounds-settings" id="rounds">
                 <option value="5">5 rounds</option>
                 <option value="10">10 rounds</option>
                 <option value="26">Whole alphabet (26 rounds)</option>
-                
+
             </select>
         </div>
 
         <button class="start-game-button" id="start-game">Start Game</button>
-
-
     <?php endif; ?>
-
-
-
 
     <script>
         window.onload = function () {
+            var socket = io('http://localhost:3000');
+
             var startGameButton = document.getElementById('start-game');
             if (startGameButton) {
                 startGameButton.addEventListener('click', function () {
@@ -168,64 +165,65 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                     xhr.send(formData);
                 })
             }
-        }
 
-        function fetchUsers() {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    var users = response.users;
-                    if (response.game_started) {
-                        window.location.href = 'game.php';
-                        return;
+            
+            
+            function fetchUsers() {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        var users = response.users;
+                        if (response.game_started) {
+                            window.location.href = 'game.php';
+                            return;
+                        }
+    
+                        var usersList = document.getElementById('users-list');
+                        usersList.innerHTML = '';
+    
+                        for (var i = 0; i < users.length; i++) {
+                            var userItem = document.createElement('li');
+                            userItem.className = 'user-item';
+    
+                            var img = document.createElement('img');
+                            img.className = 'player-profile-picture';
+                            img.src = users[i].profile_picture || 'default_profile_picture.jpg';
+                            img.alt = users[i].username;
+    
+                            var span = document.createElement('span');
+                            span.textContent = users[i].username;
+    
+                            userItem.appendChild(img);
+                            userItem.appendChild(span);
+                            usersList.appendChild(userItem);
+                        }
                     }
-
-                    var usersList = document.getElementById('users-list');
-                    usersList.innerHTML = '';
-
-                    for (var i = 0; i < users.length; i++) {
-                        var userItem = document.createElement('li');
-                        userItem.className = 'user-item';
-
-                        var img = document.createElement('img');
-                        img.className = 'player-profile-picture';
-                        img.src = users[i].profile_picture || 'default_profile_picture.jpg';
-                        img.alt = users[i].username;
-
-                        var span = document.createElement('span');
-                        span.textContent = users[i].username;
-
-                        userItem.appendChild(img);
-                        userItem.appendChild(span);
-                        usersList.appendChild(userItem);
-                    }
-                }
-            };
-
-            xhr.open('GET', 'fetch_users.php', true);
-            xhr.send();
+                };
+    
+                xhr.open('GET', 'fetch_users.php', true);
+                xhr.send();
+            }
+            setInterval(fetchUsers, 1000);
+    
+    
+            ///////////////////////////////////script for pop-up
+            document.addEventListener('DOMContentLoaded', function () {
+                const profilePicture = document.getElementById('profilePicture');
+                const profilePopupOverlay = document.getElementById('profilePopupOverlay');
+                const profilePopupClose = document.getElementById('profilePopupClose');
+    
+                profilePicture.addEventListener('click', (e) => {
+                    e.preventDefault(); // stop navigating to 'profile.php'
+                    e.stopPropagation(); // stop the event from bubbling up the DOM tree
+                    profilePopupOverlay.classList.add('popup-show');
+                });
+    
+                profilePopupClose.addEventListener('click', () => {
+                    profilePopupOverlay.classList.remove('popup-show');
+                });
+            });
         }
-        setInterval(fetchUsers, 1000);
-
-
-        ///////////////////////////////////script for pop-up
-        document.addEventListener('DOMContentLoaded', function () {
-            const profilePicture = document.getElementById('profilePicture');
-            const profilePopupOverlay = document.getElementById('profilePopupOverlay');
-            const profilePopupClose = document.getElementById('profilePopupClose');
-
-            profilePicture.addEventListener('click', (e) => {
-                e.preventDefault(); // stop navigating to 'profile.php'
-                e.stopPropagation(); // stop the event from bubbling up the DOM tree
-                profilePopupOverlay.classList.add('popup-show');
-            });
-
-            profilePopupClose.addEventListener('click', () => {
-                profilePopupOverlay.classList.remove('popup-show');
-            });
-        });
-
 
     </script>
 </body>
