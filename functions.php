@@ -17,16 +17,21 @@ function generateRandomCode($length = 8) {
 }
 
 function generateRandomLetter() {
-    static $usedLetters = array();
+    static $usedLetters = [];
+
+    if(count($usedLetters) == 26) {
+        throw new Exception('All letters have been used.');
+    }
 
     do {
-        $letter = chr(65 + rand(0,25));
+        $letter = chr(65 + rand(0, 25));
     } while (in_array($letter, $usedLetters));
 
     $usedLetters[] = $letter;
 
     return $letter;
 }
+
 
 function normalize($string) {
     $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);

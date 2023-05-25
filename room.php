@@ -132,6 +132,7 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                 <option value="60">60</option>
                 <option value="120">120</option>
                 <option value="180">180</option>
+                <option value="99999999">a lot</option>
             </select>
         </div>
 

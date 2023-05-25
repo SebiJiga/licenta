@@ -789,3 +789,74 @@ input[type="text"] {
     font-weight: bold;
     color: #3e8e41;
 }
+
+#chat-toggle-button{
+    position: fixed;
+    bottom:1%;
+    right:1%;
+}
+.chat-container-game{
+    position: fixed;
+    bottom:1%;
+    right:1%;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+  
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    text-align: center;
+}
+  
+#backToRoomButton {
+    display: inline-block;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    background-color:#3e8e41; 
+    color: white; 
+    border: none;
+    border-radius: 4px;
+}
+
+.congrats-end {
+    font-size: 2em;
+    color: #333;
+}
+
+.username-end {
+    font-size: 1.5em;
+    color: #444;
+}
+  
+.imgProfile-endGame {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 10px auto;
+}
+
+.imgCup-endGame {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    margin: 10px auto;
+}

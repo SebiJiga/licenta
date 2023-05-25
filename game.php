@@ -89,13 +89,19 @@ $rounds = $game_settings['rounds'];
     </div>
   </table>
 
+  <div id="endGameModal" class="modal">
+    <div id="endGameModal-content" class="modal-content">
+      <h2 id="winner-announcement"></h2>
+      <button id="backToRoomButton">Back to room</button>
+    </div>
+  </div>
+
+
 
 
   <script>
     document.addEventListener('DOMContentLoaded', (event) => {
       var socket = io('http://localhost:3000');
-
-
 
       socket.on('fetchScore', () => {
         console.log("Scores fetched");
@@ -155,6 +161,7 @@ $rounds = $game_settings['rounds'];
         table.appendChild(row);
       }
 
+      
       function clearUserRows() {
         let table = document.getElementById('response-table');
         let rows = table.getElementsByTagName('tr');
@@ -203,8 +210,6 @@ $rounds = $game_settings['rounds'];
           if (xhr.status === 200) {
             var response = JSON.parse(xhr.responseText);
             if (response.error && response.error === 'Maximum rounds reached') {
-              // handle maximum rounds reached
-              alert('Maximum rounds reached');
               return;
             }
             if (response.message && response.message === 'User not the game creator') {
@@ -226,6 +231,7 @@ $rounds = $game_settings['rounds'];
     formData.append('letter', currentLetter);
     xhr.send(formData);
       }
+
 
     function startRound() {
       if (currentRound > roundsRemaining) {
@@ -324,10 +330,11 @@ $rounds = $game_settings['rounds'];
       });
 }
 
-  
-    let totalGameScore = 0;
 
+    let totalGameScores = {};
+    let currentUserId = <?php echo json_encode($_SESSION['id']); ?>;
     function scores() {
+      console.log("function scores() called");
       fetch('correct_responses.php', {
         method: 'POST',
         headers: {
@@ -360,21 +367,110 @@ $rounds = $game_settings['rounds'];
             console.error(`Total score cell for user ${userId} not found`);
           }
 
-          totalGameScore += userScore['total'];
-          document.getElementById('total-game-score').textContent = totalGameScore;
-          
-           
+          if (!totalGameScores[userId]) {
+            totalGameScores[userId] = 0;
+          }
+
+          if (userId == currentUserId) {
+            totalGameScores[userId] += userScore['total'];
+            document.getElementById('total-game-score').textContent = totalGameScores[userId];
+          }
         });
       });
     }
 
 
 
-    
+    function calculateWinner() {
+      let winnerId = null;
+      let maxScore = -1;
 
-    function endGame() {
-      // Handle the end of the game
+      Object.entries(totalGameScores).forEach(([userId, userScore]) => {
+        if (userScore > maxScore) {
+          maxScore = userScore;
+          winnerId = userId;
+        }
+      });
+
+      return winnerId;
     }
+
+    var isGameEnded = false;
+    function endGame() {
+
+      if (isGameEnded) {
+        return
+      }
+      console.log("endGame called");
+      highestScore = 0;
+      let winnerId = calculateWinner();
+
+      Object.entries(totalGameScores).forEach(([userId, score]) => {
+        if (score > highestScore) {
+          highestScore = score;
+          winnerId = userId;
+        }
+      });
+
+      if (winnerId !== null) {
+        fetch('update_winner.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: winnerId
+          }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Succes:', data);
+
+            var congrats = document.createElement('h1');
+            var imgCup = document.createElement('img');
+            var imgProfile = document.createElement('img');
+            var username = document.createElement('h2');
+            var modalContent = document.getElementById('endGameModal-content');
+
+            congrats.textContent = "Congratulations!!!!";
+            congrats.className = 'congrats-end';
+            imgCup.src = "trophy_image.jpg";  
+            imgCup.className = 'imgCup-endGame';
+            imgProfile.src = data.profile_picture;
+            imgProfile.className = 'imgProfile-endGame';
+            username.textContent = data.username;
+            username.className = 'username-end';
+
+           
+            modalContent.appendChild(congrats);
+            modalContent.appendChild(imgCup);
+            modalContent.appendChild(imgProfile);
+            modalContent.appendChild(username);
+
+           
+            document.getElementById('endGameModal').style.display = 'block';
+
+            document.getElementById('backToRoomButton').addEventListener('click', function () {
+              fetch('end_game.php', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  room_code:roomCode
+                }),
+              })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Room deleted:', data);
+                window.location.href = "index.php";
+              })
+            })
+          })
+      }
+      isGameEnded = true;
+    }
+
 
     let waitingCountdownDuration = 5;
     let waitingCountdown;
@@ -388,10 +484,10 @@ $rounds = $game_settings['rounds'];
         if (waitingCountdownDuration <= 0) {
           clearInterval(waitingCountdown);
           document.getElementById('status-text').textContent = 'The game is now in progress! Hurry up and fill the boxes with your responses!';
-          
+
           waitingCountdownDuration = 5;
           isCountdownStarted = false;
-        
+
         } else {
           waitingCountdownDuration--;
         }
@@ -399,7 +495,7 @@ $rounds = $game_settings['rounds'];
 
       setTimeout(() => {
         setGameState('playing');
-        
+
       }, waitingCountdownDuration * 1000);
     }
 
@@ -415,8 +511,8 @@ $rounds = $game_settings['rounds'];
       isCountdownStarted = true;
       reviewingCountdown = setInterval(() => {
         document.getElementById('status-text').textContent = "Next round will start in " + reviewingCountdownDuration + " seconds. Get ready!";
-        
         if (reviewingCountdownDuration <= 0) {
+          document.getElementById('status-text').textContent = 'The game is now in progress! Hurry up and fill the boxes with your responses!';
           clearInterval(reviewingCountdown);
           reviewingCountdownDuration = 5
           isCountdownStarted = false;
@@ -473,6 +569,7 @@ $rounds = $game_settings['rounds'];
 
             case 'playing':
               if (lastState !== 'playing') {
+                document.getElementById('status-text').textContent = 'The game is now in progress! Hurry up and fill the boxes with your responses!';
                 startRound();
               }
               break;
