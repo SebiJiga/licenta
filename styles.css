@@ -14,13 +14,13 @@ header {
 }
 
 .header-left {
-    padding-left: 20px;  
+    padding-left: 20px;
 }
 
 .text-decoration {
-    font-family:'Courier New', Courier, monospace;
+    font-family: 'Courier New', Courier, monospace;
     font-size: 32px;
-    color:#ccc;
+    color: #ccc;
     text-decoration: none;
 }
 
@@ -61,10 +61,10 @@ header {
 
 .logout-btn:hover {
     background-color: #333;
-    color:aliceblue;
+    color: aliceblue;
 }
 
-  
+
 
 .form-group {
     margin-bottom: 20px;
@@ -74,12 +74,14 @@ label {
     display: block;
     margin-bottom: 5px;
 }
+
 .main-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
+
 .main-container input[type="file"],
 input[type="text"] {
     display: block;
@@ -88,27 +90,28 @@ input[type="text"] {
     border-radius: 5px;
     border: 1px solid #ccc;
     color: #0062cc;
-    margin-left:-10px;
-    margin-bottom:10px;
-    margin-right:20px;
+    margin-left: -10px;
+    margin-bottom: 10px;
+    margin-right: 20px;
     font-size: 10px;
 }
+
 .main-container button[type="submit"] {
     display: block;
     margin-top: 20px;
     padding: 10px;
     border-radius: 5px;
     border: none;
-    background-color:#4CAF50;
+    background-color: #4CAF50;
     color: #fff;
     cursor: pointer;
 }
 
 .main-container button[type="submit"]:hover {
-    background-color:#3e8e41;
+    background-color: #3e8e41;
 }
 
-  
+
 .button-container {
     display: flex;
     flex-direction: column;
@@ -118,30 +121,30 @@ input[type="text"] {
 
 
 .button {
- 
-  font-weight: bold;
-  text-decoration: none;
-  color: #fff;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  cursor: pointer;
-  margin: 10px;
-  font-size: 24px;
-  padding: 16px 32px;
-  bottom: 30%;
+
+    font-weight: bold;
+    text-decoration: none;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: 10px;
+    font-size: 24px;
+    padding: 16px 32px;
+    bottom: 30%;
 }
 
 .button:hover {
-  background-color: #3e8e41;
+    background-color: #3e8e41;
 }
 
 /* Popup styles */
 
-.popup-profile{
+.popup-profile {
     position: fixed;
-    top: 15%;
+    top: 25%;
     right: 1%;
     z-index: 999;
     opacity: 0;
@@ -151,30 +154,31 @@ input[type="text"] {
     transition: opacity 0.5s ease-in-out;
 }
 
-.popup-profile-content{
+.popup-profile-content {
     margin-top: 10px;
     padding: 5px 5px;
 }
 
-.popup-profile-container{
+.popup-profile-container {
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     position: relative;
     width: 500px;
     max-width: 90%;
-    top:50%;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); 
+    transform: translate(-50%, -50%);
 }
 
 .form-group {
     margin-bottom: 20px;
 }
 
-.button-save-changes, .button-delete {
-    display:inline-block;
+.button-save-changes,
+.button-delete {
+    display: inline-block;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -209,7 +213,7 @@ input[type="text"] {
 
 .button-delete:hover {
     background-color: #da190b;
-} 
+}
 
 
 .popup-overlay {
@@ -218,7 +222,7 @@ input[type="text"] {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
     opacity: 0;
     visibility: hidden;
@@ -230,15 +234,16 @@ input[type="text"] {
 .popup-overlay label {
     font-weight: bold;
 }
+
 .popup-container {
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     position: relative;
     width: 500px;
     max-width: 90%;
-    top:50%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
@@ -257,15 +262,15 @@ input[type="text"] {
 
 .popup-content input[type="text"] {
     color: #0062cc;
-    margin-left:-10px;
-    margin-bottom:10px;
-    margin-right:20px;
+    margin-left: -10px;
+    margin-bottom: 10px;
+    margin-right: 20px;
     font-size: 10px;
-    
+
 }
 
 .popup-content button[type="submit"] {
-    align-items:center;
+    align-items: center;
     margin-top: 0;
     padding: 10px 10px;
     font-size: 16px;
@@ -277,7 +282,7 @@ input[type="text"] {
 }
 
 .popup-content button[type="submit"]:hover {
-    background-color:#3e8e41;
+    background-color: #3e8e41;
 }
 
 .popup-show {
@@ -288,42 +293,44 @@ input[type="text"] {
 
 .popup-container {
     animation: fadeInDown 0.5s ease;
-  }
-  
-  @keyframes fadeInDown {
-    0% {
-      opacity: 0;
-      transform: translateY(-50px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+}
 
-  /*ROOM //////////////////////////////////////////////////////////////////////////////////////////////// */
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/*ROOM //////////////////////////////////////////////////////////////////////////////////////////////// */
 
 .room-container {
     position: absolute;
     bottom: 0;
     left: 1%;
-    margin-left:10px;
+    margin-left: 10px;
     margin-bottom: 10px;
     transform: translateX(0%);
-    
+
 }
 
 .room-container-not-creator {
     position: absolute;
     bottom: 0;
     right: 1%;
-    margin-left:10px;
+    margin-left: 10px;
     margin-bottom: 10px;
     transform: translateX(0%);
-    
+
 }
+
 .room-code {
-    font-family:'Courier New', Courier, monospace;
+    font-family: 'Courier New', Courier, monospace;
     text-align: center;
     font-weight: bold;
     color: #fff;
@@ -333,7 +340,7 @@ input[type="text"] {
     margin: 10px;
     font-size: 24px;
     padding: 16px 32px;
-    
+
 }
 
 .room-paragraf {
@@ -363,7 +370,7 @@ input[type="text"] {
     padding: 16px 32px;
 }
 
-.rounds{
+.rounds {
     font-weight: bold;
     position: absolute;
     bottom: 10%;
@@ -371,6 +378,7 @@ input[type="text"] {
     left: 60%;
     transform: translateX(-50%);
 }
+
 .rounds-settings {
     position: absolute;
     text-align: center;
@@ -389,17 +397,85 @@ input[type="text"] {
     position: absolute;
     bottom: 2%;
     right: 20px;
-    font-weight: bold;;
+    font-weight: bold;
     margin-bottom: 10px;
-    margin-right:10px;
+    margin-right: 10px;
     color: #fff;
     background-color: #4CAF50;
     border: none;
     border-radius: 5px;
     font-size: 24px;
     padding: 16px 32px;
-    cursor:pointer;
+    cursor: pointer;
     text-decoration: none;
+}
+
+
+/*//////////////////////////////////////////////////////////////////chat///////////////////////////////*/
+
+.chat-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 1000px;
+    height: 400px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(69, 202, 96, 0.5);
+    top: 10%;
+    left: 1%;
+    margin: 15px;
+}
+
+.chat-form input[type="submit"]{
+    background-color: #4CAF50;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    padding: 16px 32px;
+}
+.chat-messages-container {
+    margin-bottom: 10px;
+    overflow-y: auto;
+    max-height: 350px;
+}
+
+.my-message {
+    text-align: right;
+}
+
+.their-message {
+    text-align: left;
+}
+
+#chat-messages li {
+    list-style-type: none;
+}
+
+
+.message-text {
+    font-size: large;
+    margin-right: 5px;
+    margin-left: 5px;
+    max-width: 300px;
+}
+
+.username-chat {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.message-profile-picture {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 5px;
+    margin-left: 5px;
 }
 
 /*user list*/
@@ -421,9 +497,11 @@ input[type="text"] {
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-   top:10%;
-   right:1%;
-    margin-right:5px;
+    top: 10%;
+    right: 1%;
+    margin-right: 5px;
+    overflow-y: auto;
+
 }
 
 .users-list {
@@ -444,17 +522,24 @@ input[type="text"] {
     margin-bottom: 0;
 }
 
+
 /*/////////////////////////////////////////////////.........................*/
+@media screen and (max-width:1400px) {
+    .chat-container{
+        max-width: 700px;
+    }
+}
 
 @media screen and (max-width:1300px) {
     .game-settings {
         position: absolute;
-        bottom:30%;
-        left:1%;
+        bottom: 30%;
+        left: 1%;
         transform: none;
         margin-left: auto;
         margin-right: auto;
     }
+
     .rounds {
         position: absolute;
         bottom: 10%;
@@ -463,10 +548,15 @@ input[type="text"] {
         margin-left: auto;
         margin-right: auto;
     }
+
+    .chat-container{
+        width: 500px;
+        height:300px;
+    }
 }
 
 @media screen and (max-width: 950px) {
-    
+
     .rounds {
         position: absolute;
         bottom: 30%;
@@ -475,10 +565,11 @@ input[type="text"] {
         margin-left: auto;
         margin-right: auto;
     }
+
     .start-game-button {
         position: absolute;
-        bottom:1%;
-        right:1%;
+        bottom: 1%;
+        right: 1%;
         transform: none;
         margin-left: auto;
         margin-right: auto;
@@ -488,27 +579,31 @@ input[type="text"] {
 /*//////////////////////////////////////////////////////////////////GAME///////////////////////////////*/
 
 .TOMAPAN {
-display:grid;
-grid-template-columns: auto auto auto auto auto auto auto;
-justify-content: space-evenly;
-font-size: 2rem;
-font-family:fantasy;
-color:#3e8e41;
-padding:15px;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto;
+    justify-content: space-evenly;
+    font-size: 2rem;
+    font-family: fantasy;
+    color: #3e8e41;
+    padding: 15px;
 }
 
-.TOMAPAN b{
-    pointer-events:none;
+.TOMAPAN b {
+    pointer-events: none;
 }
+
 .item1 {
     grid-area: 1 / 1 / 2 / 2;
 }
+
 .item2 {
     grid-area: 2 / 1 / 3 / 2;
 }
+
 .item3 {
     grid-area: 1 / 2 / 2 / 3;
 }
+
 .item4 {
     grid-area: 2 / 2 /3 / 3
 }
@@ -516,9 +611,11 @@ padding:15px;
 .item5 {
     grid-area: 1 / 3 / 2 / 4
 }
+
 .item6 {
     grid-area: 2 / 3 / 3 / 4;
 }
+
 .item7 {
     grid-area: 1 / 4 / 2 / 5;
 }
@@ -526,32 +623,36 @@ padding:15px;
 .item8 {
     grid-area: 2 / 4 / 3 / 5;
 }
+
 .item9 {
     grid-area: 1 / 5 / 2 / 6;
 }
+
 .item10 {
     grid-area: 2 / 5 / 3 / 6;
 }
+
 .item11 {
     grid-area: 1 / 6 / 2 / 7;
 }
+
 .item12 {
     grid-area: 2/ 6 / 3 / 7;
 }
 
 .TOMAPAN input[type="text"] {
     font-size: medium;
-    color:#333;
+    color: #333;
     width: 100px;
     border-style: solid;
     border-width: 2px;
     border-color: #000000;
-    
+
 }
 
 .TOMAPAN-TIMER {
     position: absolute;
-    left:1%;
+    left: 1%;
     text-align: center;
     font-weight: bold;
     color: #fff;
@@ -561,13 +662,13 @@ padding:15px;
     margin-left: 10px;
     font-size: 24px;
     padding: 16px 32px;
-    pointer-events:none;
+    pointer-events: none;
 }
 
 .TOMAPAN-ROUNDS {
-    
+
     position: absolute;
-    left:49%;
+    left: 49%;
     text-align: center;
     font-weight: bold;
     color: #fff;
@@ -577,22 +678,23 @@ padding:15px;
     margin-left: 10px;
     font-size: 24px;
     padding: 16px 32px;
-    pointer-events:none;
+    pointer-events: none;
 }
 
 .TOMAPAN-SCORE {
     position: absolute;
     text-align: center;
     right: 1%;
-    margin-right:10px;
+    margin-right: 10px;
     transform: translateX(0%);
     pointer-events: none;
 }
-.TOMAPAN-SCORE p{
+
+.TOMAPAN-SCORE p {
     font-weight: bold;
 }
 
-.TOMAPAN-SCORE h1{  
+.TOMAPAN-SCORE h1 {
     text-align: center;
     font-weight: bold;
     color: #fff;
@@ -605,8 +707,15 @@ padding:15px;
 }
 
 @keyframes letter-animation {
-    0% { opacity: 0; transform: scale(0); }
-    100% {opacity: 1; transform: scale(1); }
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 #random-letter {
@@ -615,11 +724,11 @@ padding:15px;
     position: absolute;
     text-align: center;
     left: 8%;
-    margin-left:10px;
+    margin-left: 10px;
     color: #333;
-    border:none;
+    border: none;
     border-radius: 3px;
-    font-size:40px;
+    font-size: 40px;
     padding: 16px 32px;
     pointer-events: none;
     animation: letter-animation 3s ease-in-out;
@@ -629,29 +738,29 @@ padding:15px;
     border-collapse: separate;
     border-spacing: 40px 20px;
     position: absolute;
-    left:3%;
+    left: 3%;
     top: 30%;
-    font-size:2.5rem;
+    font-size: 2.5rem;
 }
 
 .response-table-content {
-    font-size:1.5rem;
-    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.5rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 
 }
 
 
 .response-table-first {
-    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
 }
 
 .status-text {
-    max-width:380px;
-    font-size:1.5rem;
+    max-width: 380px;
+    font-size: 1.5rem;
     font-weight: bold;
-    position:absolute;
-    left:17%;
-    font-family:Georgia, 'Times New Roman', Times, serif;
+    position: absolute;
+    left: 17%;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .loader {
@@ -659,19 +768,24 @@ padding:15px;
     text-align: center;
     left: 10%;
     border: 16px solid #333;
-    border-top: 16px solid #3e8e41; 
+    border-top: 16px solid #3e8e41;
     border-radius: 50%;
     width: 50px;
     height: 50px;
     animation: spin 2s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
 .table-score {
     font-weight: bold;
-    color:#3e8e41; 
+    color: #3e8e41;
 }

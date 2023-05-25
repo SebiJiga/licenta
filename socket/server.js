@@ -26,6 +26,10 @@ io.on('connection', (socket) => {
     socket.emit('startCountdown');
   });
 
+  socket.on('startReviewingCountdown', () => {
+    socket.emit('reviewingCountdown');
+  })
+
   //handle 'createRound'
   socket.on('roundCreated', (data) => {
     io.emit('roundCreated', data);
@@ -33,17 +37,8 @@ io.on('connection', (socket) => {
 
   //handle "submit responses"
   socket.on('responsesSaved', () => {
-    io.emit('fetchCorrectResponses');
-
-  });
-
-  //handle update the score 
-  socket.on('responsesUpdated', () => {
+    console.log('received "responses saved"');
     io.emit('fetchScore');
-  });
-
-  socket.on('startNextRound', () => {
-    io.emit('startRoundCountdown', { countdownTime: 20 });
   });
 
   //////////////////////////////CHAT////////////////////////
@@ -52,8 +47,6 @@ io.on('connection', (socket) => {
     socket.user = data;
     socket.room_code = data.room_code;
     socket.join(data.room_code);
-    socket.emit('chatMessage', { user: 'System', text: `Welcome ${data.user}!`});
-    socket.broadcast.to(data.room_code).emit('chatMessage', { user: 'System', text: `${data.user} has joined the room.` });
   });
 
   socket.on('chatMessage', (data) => {

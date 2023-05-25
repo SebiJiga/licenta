@@ -95,36 +95,11 @@ $rounds = $game_settings['rounds'];
     document.addEventListener('DOMContentLoaded', (event) => {
       var socket = io('http://localhost:3000');
 
-      socket.on('fetchCorrectResponses', () => {
-        console.log("It works");
-        updateResponses();
-      });
+
 
       socket.on('fetchScore', () => {
         console.log("Scores fetched");
         scores();
-      });
-
-      socket.on('startRoundCountdown', (data) => {
-        let countdownTime = data.countdownTime;
-
-        let countdownInterval = setInterval(() => {
-          countdownTime--;
-
-          console.log(`Time remaining: ${countdownTime} seconds`);
-
-          document.getElementById('status-text').textContent = `Next round will start in ${countdownTime} seconds...`;
-
-          if (countdownTime <= 0) {
-            clearInterval(countdownInterval);
-            console.log("Next round started");
-
-            if (currentRound <= roundsRemaining) {
-              createRound();
-            }
-            startWaitingCountdown();
-          }
-        }, 1000);
       });
 
 
@@ -349,37 +324,7 @@ $rounds = $game_settings['rounds'];
       });
 }
 
-    function updateResponses() {
-
-      fetch('fetch_responses.php', {
-
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ round_number: currentRound - 1 }),
-      })
-        .then(response => response.json())
-        .then(data => {
-          let responses = data.responses;
-
-          responses.forEach(response => {
-            let categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
-            categories.forEach(category => {
-              let cell = document.getElementById('user-' + response.user_id + '-' + category);
-              if (cell) {
-                console.log(`Updating cell for user ${response.user_id} and category ${category}`);
-                cell.textContent = response[category];
-              } else {
-                console.error(`Cell for user ${response.user_id} and category ${category} not found`);
-              }
-            });
-          });
-
-          socket.emit('responsesUpdated');
-        });
-    }
-
+  
     let totalGameScore = 0;
 
     function scores() {
@@ -417,18 +362,15 @@ $rounds = $game_settings['rounds'];
 
           totalGameScore += userScore['total'];
           document.getElementById('total-game-score').textContent = totalGameScore;
-
-          setTimeout(() => {
-            socket.emit('startNextRound');
-            console.log('startNextRound socket called');
-          }, 10 * 1000);
+          
+           
         });
       });
     }
 
 
 
-
+    
 
     function endGame() {
       // Handle the end of the game
@@ -446,10 +388,10 @@ $rounds = $game_settings['rounds'];
         if (waitingCountdownDuration <= 0) {
           clearInterval(waitingCountdown);
           document.getElementById('status-text').textContent = 'The game is now in progress! Hurry up and fill the boxes with your responses!';
-
+          
           waitingCountdownDuration = 5;
           isCountdownStarted = false;
-
+        
         } else {
           waitingCountdownDuration--;
         }
@@ -457,12 +399,40 @@ $rounds = $game_settings['rounds'];
 
       setTimeout(() => {
         setGameState('playing');
-
+        
       }, waitingCountdownDuration * 1000);
     }
 
     socket.on('startCountdown', () => {
       startWaitingCountdown();
+    });
+
+
+    let reviewingCountdownDuration = 5;
+    let reviewingCountdown;
+
+    function startReviewingCountdown() {
+      isCountdownStarted = true;
+      reviewingCountdown = setInterval(() => {
+        document.getElementById('status-text').textContent = "Next round will start in " + reviewingCountdownDuration + " seconds. Get ready!";
+        
+        if (reviewingCountdownDuration <= 0) {
+          clearInterval(reviewingCountdown);
+          reviewingCountdownDuration = 5
+          isCountdownStarted = false;
+        } else {
+          reviewingCountdownDuration--;
+        }
+      }, 1000);
+
+      setTimeout(() => {
+        setGameState('playing');
+      }, reviewingCountdownDuration * 1000);
+    }
+
+    socket.on('reviewingCountdown', () => {
+      console.log('startReviewingCountdown socket called');
+      startReviewingCountdown();
     });
 
 
@@ -486,12 +456,6 @@ $rounds = $game_settings['rounds'];
         })
     }
 
-    socket.on('fetchCorrectResponses', () => {
-      console.log("it works");
-      //updateResponses();
-      //scores();
-    });
-
     let lastState = null;
     function checkGameState() {
       fetch('get_game_state.php')
@@ -502,7 +466,6 @@ $rounds = $game_settings['rounds'];
             case 'waiting':
               if (lastState !== 'waiting') {
                 socket.emit('startWaitingCountdown');
-
                 fetchUsers();
                 createRound();
               }
@@ -516,8 +479,8 @@ $rounds = $game_settings['rounds'];
 
             case 'reviewing':
               if (lastState !== 'reviewing') {
-                statusText.textContent = 'Reviewing the results...';
-
+                socket.emit('startReviewingCountdown');
+                createRound();
 
               }
               break;

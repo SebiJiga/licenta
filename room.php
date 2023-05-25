@@ -146,7 +146,20 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
         </div>
 
         <button class="start-game-button" id="start-game">Start Game</button>
+
+
+
     <?php endif; ?>
+
+    <div class="chat-container">
+        <div class="chat-messages-container" id="chat-messages">
+        </div>
+        <form id="chat-form" class="chat-form">
+            <input type="text" id="chat-input" placeholder="Enter your message" required>
+            <input type="submit" value="Send">
+        </form>
+    </div>
+
 
     <script>
         window.onload = function () {
@@ -166,8 +179,50 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                 })
             }
 
-            
-            
+            var chatForm = document.getElementById('chat-form');
+            var chatInput = document.getElementById('chat-input');
+            var chatMessages = document.getElementById('chat-messages');
+
+            socket.emit('newUser', { user: '<?php echo $_SESSION['username']; ?>', room_code: '<?php echo $room_code; ?>' });
+            socket.on('chatMessage', (data) => {
+                var messageItem = document.createElement('li');
+
+                var messageText = document.createElement('span');
+                messageText.textContent = data.text;
+                messageText.className = 'message-text';
+
+                var usernameSpan = document.createElement('span');
+                usernameSpan.textContent = data.user;
+                usernameSpan.className = 'username-chat';
+
+                var img = document.createElement('img');
+                img.className = 'message-profile-picture';
+                img.src = data.profile_picture || 'Sample_User_icon.png';
+                img.alt = data.user;
+
+                if (data.user === '<?php echo $_SESSION['username']; ?>') {
+                    messageItem.className = 'my-message';
+                    messageItem.appendChild(messageText);
+                    //messageItem.appendChild(usernameSpan);
+                    messageItem.appendChild(img);
+                } else {
+                    messageItem.className = 'their-message';
+                    messageItem.appendChild(img);
+                    messageItem.appendChild(usernameSpan);
+                    messageItem.appendChild(messageText);
+                }
+
+                chatMessages.appendChild(messageItem);
+            });
+
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (chatInput.value) {
+                    socket.emit('chatMessage', { text: chatInput.value, user: '<?php echo $_SESSION['username']; ?>', profile_picture: '<?php echo $_SESSION['profile_picture']; ?>' });
+                    chatInput.value = '';
+                }
+            });
+
             function fetchUsers() {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function () {
@@ -178,53 +233,51 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                             window.location.href = 'game.php';
                             return;
                         }
-    
+
                         var usersList = document.getElementById('users-list');
                         usersList.innerHTML = '';
-    
+
                         for (var i = 0; i < users.length; i++) {
                             var userItem = document.createElement('li');
                             userItem.className = 'user-item';
-    
+
                             var img = document.createElement('img');
                             img.className = 'player-profile-picture';
                             img.src = users[i].profile_picture || 'default_profile_picture.jpg';
                             img.alt = users[i].username;
-    
+
                             var span = document.createElement('span');
                             span.textContent = users[i].username;
-    
+
                             userItem.appendChild(img);
                             userItem.appendChild(span);
                             usersList.appendChild(userItem);
                         }
                     }
                 };
-    
+
                 xhr.open('GET', 'fetch_users.php', true);
                 xhr.send();
             }
             setInterval(fetchUsers, 1000);
-    
-    
+
+
             ///////////////////////////////////script for pop-up
-            document.addEventListener('DOMContentLoaded', function () {
+            
                 const profilePicture = document.getElementById('profilePicture');
                 const profilePopupOverlay = document.getElementById('profilePopupOverlay');
                 const profilePopupClose = document.getElementById('profilePopupClose');
-    
+
                 profilePicture.addEventListener('click', (e) => {
                     e.preventDefault(); // stop navigating to 'profile.php'
                     e.stopPropagation(); // stop the event from bubbling up the DOM tree
                     profilePopupOverlay.classList.add('popup-show');
                 });
-    
+
                 profilePopupClose.addEventListener('click', () => {
                     profilePopupOverlay.classList.remove('popup-show');
                 });
-            });
         }
-
     </script>
 </body>
 
