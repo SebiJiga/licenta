@@ -9,7 +9,6 @@ if (!is_logged_in()) {
 }
 
 ?>
-
 <!DOCTYPE html>
 <html>
 
@@ -41,15 +40,6 @@ if (!is_logged_in()) {
         </div>
     </header>
 
-
-    <div class="main-container">
-        <div class="button-container">
-            <a href="creation_room.php" class="button">Create room</a>
-            <button onclick="openPopup()" class="button enter-game-btn">Enter a game</button>
-            <a href="rules.php" class="button">Rules</a>
-        </div>
-    </div>
-
     <div class="popup-profile" id="profilePopupOverlay">
         <div class="popup-container">
             <span class="popup-close" id="profilePopupClose">&times;</span>
@@ -72,46 +62,11 @@ if (!is_logged_in()) {
             </div>
         </div>
     </div>
-
-
-
-    <div class="popup-overlay" id="popupOverlay">
-        <div class="popup-container">
-            <span class="popup-close" id="popupClose">&times;</span>
-            <div class="popup-content">
-                <form id="enterRoomForm" method="post" action="enter_room.php">
-                    <label for="roomCodeInput">Enter room code:</label>
-                    <input type="text" id="roomCodeInput" name="room_code"
-                        placeholder="Note that the code is case sensitive">
-                    <button type="submit">Enter</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
+    <div id="rules"></div>                     
+    <img src="eng_flag.jpg" id="en_flag">
+    <img src="ro_flag.jpg" id="ro_flag">
     <script>
-        function openPopup() {
-            document.getElementById("popupOverlay").classList.add("popup-show");
-        }
-
-
-        function closePopup() {
-            document.getElementById("popupOverlay").classList.remove("popup-show");
-        }
-
-        const enterRoomBtn = document.querySelector('.enter-game-btn');
-        const popupOverlay = document.getElementById('popupOverlay');
-        const popupClose = document.getElementById('popupClose');
-
-        enterRoomBtn.addEventListener('click', () => {
-            popupOverlay.classList.add('popup-show');
-        });
-
-        popupClose.addEventListener('click', () => {
-            popupOverlay.classList.remove('popup-show');
-        })
-
+        document.addEventListener('DOMContentLoaded', (event) => {
         const profilePicture = document.getElementById('profilePicture');
         const profilePopupOverlay = document.getElementById('profilePopupOverlay');
         const profilePopupClose = document.getElementById('profilePopupClose');
@@ -125,7 +80,30 @@ if (!is_logged_in()) {
             profilePopupOverlay.classList.remove('popup-show');
         });
 
+        var rules = {
+        "en": "<b>The rules of the game are:</b><br>\
+        You can create or join a room<br>\
+        If you create a room, you will be the creator. You can choose the number of rounds and how long a round will last<br>\
+        When creating the room, a code is automatically generated. Share the code with your friends and they will join in the room created by you.<br>\
+        By pressing the 'Start game' button, you will be redirected to the game where each round a letter will be automatically generated and you will have to write Countries, Cities, Mountains, Waters, Plants, Animals, Names. Any unique answer among all users receives 10 points, a non-unique answer receives 5 points. Answers must start with the generated letter, and be correct. Correct means to exist in the database.<br>\
+        At the end of the game, the player with the most points after all rounds is considered the winner.",
 
+        "ro": "<b>Regulile jocului sunt urmatoarele:</b><br>\
+        Poti crea sau intra intr-o camera<br>\
+        Daca creezi o camera, vei fi creatorul. Vei putea alege numarul de runde si cat va dura o runda<br>\
+        La crearea camerei, un cod este generat automat. Impartaseste codul cu prietenii tai iar ei se vor alatura in camera creata de tine.<br>\
+        La apasarea butonului 'Start game', veti fi redirectionati catre joc unde in fiecare runda o litera va fi generata automat si va trebui sa scrii Tari, Orase, Munti, Ape, Plante, Animale, Nume. Orice raspuns unic printre toti utilizatorii primeste 10 puncte, un raspuns care nu e unic primeste 5 puncte. Raspunsurile trebuie sa inceapa cu litera generata, si sa fie corecte. Corecte inseamna sa existe in data de baze.<br>\
+        La sfarsit de joc, jucatorul cu cele mai multe puncte dupa toate rundele este considerat castigator."
+    };
+
+        document.getElementById("en_flag").addEventListener("click", function () {
+            document.getElementById("rules").innerHTML = rules["en"];
+        });
+
+        document.getElementById("ro_flag").addEventListener("click", function () {
+            document.getElementById("rules").innerHTML = rules["ro"];
+        });
+    });
     </script>
 </body>
 
