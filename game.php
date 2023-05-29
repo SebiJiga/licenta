@@ -96,6 +96,16 @@ $rounds = $game_settings['rounds'];
     </div>
   </div>
 
+  <img id="chat-icon" src="chat.png" alt="Chat Icon">
+  <div id="chatbox" style="display:none;">
+   
+      <div class="chat-messages-container-game" id="chat-messages">
+      </div>
+      <form id="chat-form" class="chat-form-game">
+        <input type="text" id="chat-input" placeholder="Aa" required>
+      </form>
+    </div>
+
 
 
 
@@ -109,6 +119,57 @@ $rounds = $game_settings['rounds'];
       });
 
 
+
+      ////////////////CHAT///////////////
+      document.getElementById('chat-icon').addEventListener('click', function () {
+        var chatbox = document.getElementById('chatbox');
+        chatbox.style.display = chatbox.style.display === 'none' ? 'block' : 'none';
+      });
+
+      var chatForm = document.getElementById('chat-form');
+      var chatInput = document.getElementById('chat-input');
+      var chatMessages = document.getElementById('chat-messages');
+
+      socket.emit('newUser', { user: '<?php echo $_SESSION['username']; ?>', room_code: '<?php echo $room_code; ?>' });
+      socket.on('chatMessage', (data) => {
+        var messageItem = document.createElement('li');
+
+        var messageText = document.createElement('span');
+        messageText.textContent = data.text;
+        messageText.className = 'message-text-game';
+
+        var usernameSpan = document.createElement('span');
+        usernameSpan.textContent = data.user;
+        usernameSpan.className = 'username-chat-game';
+
+        var img = document.createElement('img');
+        img.className = 'message-profile-picture';
+        img.src = data.profile_picture || 'Sample_User_icon.png';
+        img.alt = data.user;
+
+        if (data.user === '<?php echo $_SESSION['username']; ?>') {
+          messageItem.className = 'my-message-game';
+          messageItem.appendChild(messageText);
+          //messageItem.appendChild(usernameSpan);
+          messageItem.appendChild(img);
+        } else {
+          messageItem.className = 'their-message-game';
+          messageItem.appendChild(img);
+          //messageItem.appendChild(usernameSpan);
+          messageItem.appendChild(messageText);
+        }
+
+        chatMessages.appendChild(messageItem);
+      });
+
+      chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (chatInput.value) {
+          socket.emit('chatMessage', { text: chatInput.value, user: '<?php echo $_SESSION['username']; ?>', profile_picture: '<?php echo $_SESSION['profile_picture']; ?>' });
+          chatInput.value = '';
+        }
+      });
+      ////////////////////////////////////
       let defaultTimerDuration = <?php echo $timerDuration ?> * 1000;
       let timerDuration = defaultTimerDuration / 1000;
 
@@ -161,7 +222,7 @@ $rounds = $game_settings['rounds'];
         table.appendChild(row);
       }
 
-      
+
       function clearUserRows() {
         let table = document.getElementById('response-table');
         let rows = table.getElementsByTagName('tr');
@@ -434,20 +495,20 @@ $rounds = $game_settings['rounds'];
 
             congrats.textContent = "Congratulations!!!!";
             congrats.className = 'congrats-end';
-            imgCup.src = "trophy_image.jpg";  
+            imgCup.src = "trophy_image.jpg";
             imgCup.className = 'imgCup-endGame';
             imgProfile.src = data.profile_picture;
             imgProfile.className = 'imgProfile-endGame';
             username.textContent = data.username;
             username.className = 'username-end';
 
-           
+
             modalContent.appendChild(congrats);
             modalContent.appendChild(imgCup);
             modalContent.appendChild(imgProfile);
             modalContent.appendChild(username);
 
-           
+
             document.getElementById('endGameModal').style.display = 'block';
 
             document.getElementById('backToRoomButton').addEventListener('click', function () {
@@ -457,14 +518,14 @@ $rounds = $game_settings['rounds'];
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  room_code:roomCode
+                  room_code: roomCode
                 }),
               })
-              .then(response => response.json())
-              .then(data => {
-                console.log('Room deleted:', data);
-                window.location.href = "index.php";
-              })
+                .then(response => response.json())
+                .then(data => {
+                  console.log('Room deleted:', data);
+                  window.location.href = "index.php";
+                })
             })
           })
       }

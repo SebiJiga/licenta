@@ -82,14 +82,14 @@ if (!is_logged_in()) {
 
         var rules = {
         "en": "<b>The rules of the game are:</b><br>\
-        You can create or join a room<br>\
-        If you create a room, you will be the creator. You can choose the number of rounds and how long a round will last<br>\
+        You can create a room or join one<br>\
+        If you choose to create a room, you will be the creator. You can choose the number of rounds and how long a round will last<br>\
         When creating the room, a code is automatically generated. Share the code with your friends and they will join in the room created by you.<br>\
         By pressing the 'Start game' button, you will be redirected to the game where each round a letter will be automatically generated and you will have to write Countries, Cities, Mountains, Waters, Plants, Animals, Names. Any unique answer among all users receives 10 points, a non-unique answer receives 5 points. Answers must start with the generated letter, and be correct. Correct means to exist in the database.<br>\
         At the end of the game, the player with the most points after all rounds is considered the winner.",
 
         "ro": "<b>Regulile jocului sunt urmatoarele:</b><br>\
-        Poti crea sau intra intr-o camera<br>\
+        Poti crea o cmera sau intra intr-una<br>\
         Daca creezi o camera, vei fi creatorul. Vei putea alege numarul de runde si cat va dura o runda<br>\
         La crearea camerei, un cod este generat automat. Impartaseste codul cu prietenii tai iar ei se vor alatura in camera creata de tine.<br>\
         La apasarea butonului 'Start game', veti fi redirectionati catre joc unde in fiecare runda o litera va fi generata automat si va trebui sa scrii Tari, Orase, Munti, Ape, Plante, Animale, Nume. Orice raspuns unic printre toti utilizatorii primeste 10 puncte, un raspuns care nu e unic primeste 5 puncte. Raspunsurile trebuie sa inceapa cu litera generata, si sa fie corecte. Corecte inseamna sa existe in data de baze.<br>\

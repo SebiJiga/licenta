@@ -414,6 +414,7 @@ input[type="text"] {
 /*//////////////////////////////////////////////////////////////////chat///////////////////////////////*/
 
 .chat-container {
+    font-family: 'Comic Sans MS', sans-serif;
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -723,12 +724,13 @@ input[type="text"] {
     font-family: fantasy;
     position: absolute;
     text-align: center;
-    left: 8%;
+    left: 15%;
+    top:12%;
     margin-left: 10px;
     color: #333;
     border: none;
     border-radius: 3px;
-    font-size: 40px;
+    font-size: 100px;
     padding: 16px 32px;
     pointer-events: none;
     animation: letter-animation 3s ease-in-out;
@@ -759,7 +761,7 @@ input[type="text"] {
     font-size: 1.5rem;
     font-weight: bold;
     position: absolute;
-    left: 17%;
+    left: 60%;
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
@@ -790,16 +792,6 @@ input[type="text"] {
     color: #3e8e41;
 }
 
-#chat-toggle-button{
-    position: fixed;
-    bottom:1%;
-    right:1%;
-}
-.chat-container-game{
-    position: fixed;
-    bottom:1%;
-    right:1%;
-}
 
 .modal {
     display: none;
@@ -861,9 +853,93 @@ input[type="text"] {
     margin: 10px auto;
 }
 
+/*//////////////////////////////////////CHAT IN THE GAME///////////////////////////*/
+#chat-icon {
+    position: fixed;
+    right: 1%;
+    bottom: 1%;
+    width:50px;
+    height:50px;
+    font-size: 2em;
+    cursor: pointer;
+    z-index:9999;
+  }
+
+#chat-icon:hover {
+    filter:brightness(50%);
+}
+  
+#chatbox {
+    font-family: 'Comic Sans MS', sans-serif;
+    position: fixed;
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height:85%;
+    right: 1%;
+    bottom: 10%;
+    width: 500px;
+    height: 300px;
+    border: 1px solid #000;
+    background: #fff;
+    padding: 10px;
+    border-radius:8px;
+    box-shadow: 0px 0px 10px rgba(69, 202, 96, 0.5);
+    margin:5px;
+}
+
+.chat-messages-container-game {
+    margin-bottom: 5px;
+    overflow-y: auto;
+    max-height: 220px;
+}
+
+.chat-form-game {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 95%;
+    background: #fff;
+    padding: 5px;
+    border-radius:15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.chat-form-game input {
+    font-family: 'Comic Sans MS', sans-serif;
+
+}
+
+.my-message-game {
+    text-align: right;
+}
+
+.their-message-game {
+    text-align: left;
+}
+
+.message-text-game {
+    font-size: small;
+    margin-right: 5px;
+    margin-left: 5px;
+    max-width: 150px;
+}
+
+.message-profile-picture-game {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+  
 
 /*/////////////////////////////////////////////////////////////////RULES//////////////////////////////////////////////////////*/
 #rules {
+    font-family: Georgia, 'Times New Roman', Times, serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -889,6 +965,7 @@ input[type="text"] {
     object-fit: cover;
     margin: 10px auto;
     font-weight: bolder;
+    cursor:pointer;
 
 }
 
@@ -901,4 +978,12 @@ input[type="text"] {
     height:30px;
     object-fit: cover;
     margin: 10px auto;
+    cursor:pointer;
+
+}
+
+#ro_flag:hover, #en_flag:hover {
+    width:150px;
+    height:100px;
+    
 }
