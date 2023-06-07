@@ -38,7 +38,12 @@ io.on('connection', (socket) => {
   //handle "submit responses"
   socket.on('responsesSaved', () => {
     console.log('received "responses saved"');
-    io.emit('fetchScore');
+    io.emit('calculateScore');
+  });
+
+  socket.on('scoresCalculated', (scores) => {
+    console.log('scores calculated');
+    io.emit('fetchScore', scores);
   });
 
   //////////////////////////////CHAT////////////////////////

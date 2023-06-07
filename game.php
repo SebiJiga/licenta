@@ -23,6 +23,14 @@ $game_settings = $stmt->fetch(PDO::FETCH_ASSOC);
 $timerDuration = $game_settings['timer'];
 $rounds = $game_settings['rounds'];
 
+$stmt = $db->prepare("SELECT creator_id FROM rooms WHERE code = ?");
+$stmt->execute([$room_code]);
+$creator_id = $stmt->fetchColumn();
+
+$user_id = $_SESSION['id']; 
+
+$isRoomCreator = ($creator_id == $user_id) ? 'true' : 'false';
+
 ?>
 
 <!DOCTYPE html>
@@ -98,13 +106,13 @@ $rounds = $game_settings['rounds'];
 
   <img id="chat-icon" src="chat.png" alt="Chat Icon">
   <div id="chatbox" style="display:none;">
-   
-      <div class="chat-messages-container-game" id="chat-messages">
-      </div>
-      <form id="chat-form" class="chat-form-game">
-        <input type="text" id="chat-input" placeholder="Aa" required>
-      </form>
+
+    <div class="chat-messages-container-game" id="chat-messages">
     </div>
+    <form id="chat-form" class="chat-form-game">
+      <input type="text" id="chat-input" placeholder="Aa" required>
+    </form>
+  </div>
 
 
 
@@ -113,10 +121,19 @@ $rounds = $game_settings['rounds'];
     document.addEventListener('DOMContentLoaded', (event) => {
       var socket = io('http://localhost:3000');
 
-      socket.on('fetchScore', () => {
-        console.log("Scores fetched");
-        scores();
+
+      let isRoomCreator = <?php echo $isRoomCreator; ?>;
+
+      socket.on('calculateScore', () => {
+        console.log("calculateScore event received");
+        if (isRoomCreator) {
+          calculateScores().then(scores => {
+            console.log("Scores calculated");
+            socket.emit('scoresCalculated', scores);
+          });
+        }
       });
+
 
 
 
@@ -391,12 +408,12 @@ $rounds = $game_settings['rounds'];
       });
 }
 
+let totalGameScores = {};
 
-    let totalGameScores = {};
-    let currentUserId = <?php echo json_encode($_SESSION['id']); ?>;
-    function scores() {
-      console.log("function scores() called");
-      fetch('correct_responses.php', {
+    function calculateScores() {
+      console.log("function calculateScores() called");
+
+      return fetch('correct_responses.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -406,40 +423,50 @@ $rounds = $game_settings['rounds'];
           round_number: currentRound - 1,
         }),
       })
-    .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        Object.entries(data).forEach(([userId, userScore]) => {
-          let categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
-          categories.forEach(category => {
-            let cell = document.getElementById('user-' + userId + '-' + category);
-            if (cell) {
-              console.log(`Updating cell for user ${userId} and category ${category}`);
-              cell.textContent = userScore[category].response + ' (' + userScore[category].score + ')';
-            } else {
-              console.error(`Cell for user ${userId} and category ${category} not found`);
+        .then(response => response.json())
+        .then(data => {
+          Object.entries(data).forEach(([userId, userScore]) => {
+            if (!totalGameScores[userId]) {
+              totalGameScores[userId] = 0;
             }
-          });
-
-          let totalScoreCell = document.getElementById('user-' + userId + '-total-score');
-          if (totalScoreCell) {
-            totalScoreCell.textContent = userScore['total'];
-          } else {
-            console.error(`Total score cell for user ${userId} not found`);
-          }
-
-          if (!totalGameScores[userId]) {
-            totalGameScores[userId] = 0;
-          }
-
-          if (userId == currentUserId) {
             totalGameScores[userId] += userScore['total'];
-            document.getElementById('total-game-score').textContent = totalGameScores[userId];
+            userScore['totalScore'] = totalGameScores[userId];
+          }); 
+          return data;
+        });
+    }
+    let currentUserId = <?php echo json_encode($_SESSION['id']); ?>;
+    function fetchScores(data) {
+      console.log("function fetchScores() called");
+      Object.entries(data).forEach(([userId, userScore]) => {
+        let categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
+        categories.forEach(category => {
+          let cell = document.getElementById('user-' + userId + '-' + category);
+          if (cell) {
+            console.log(`Updating cell for user ${userId} and category ${category}`);
+            cell.textContent = userScore[category].response + ' (' + userScore[category].score + ')';
+          } else {
+            console.error(`Cell for user ${userId} and category ${category} not found`);
           }
         });
+
+        let totalScoreCell = document.getElementById('user-' + userId + '-total-score');
+        if (totalScoreCell) {
+          totalScoreCell.textContent = userScore['total'];
+        } else {
+          console.error(`Total score cell for user ${userId} not found`);
+        }
+
+        if (userId == currentUserId) {
+          document.getElementById('total-game-score').textContent = totalGameScores[userId];
+        }
       });
     }
 
+    socket.on('fetchScore', (scores) => {
+      console.log("Scores calculated");
+      fetchScores(scores);
+    });
 
 
     function calculateWinner() {
