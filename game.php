@@ -27,9 +27,15 @@ $stmt = $db->prepare("SELECT creator_id FROM rooms WHERE code = ?");
 $stmt->execute([$room_code]);
 $creator_id = $stmt->fetchColumn();
 
-$user_id = $_SESSION['id']; 
+$user_id = $_SESSION['id'];
 
 $isRoomCreator = ($creator_id == $user_id) ? 'true' : 'false';
+
+
+$stmt = $db->prepare("SELECT COUNT(*) FROM users WHERE room_code = ?");
+$stmt->execute([$room_code]);
+$num_users = $stmt->fetchColumn();
+
 
 ?>
 
@@ -122,11 +128,13 @@ $isRoomCreator = ($creator_id == $user_id) ? 'true' : 'false';
       var socket = io('http://localhost:3000');
 
 
-      let isRoomCreator = <?php echo $isRoomCreator; ?>;
+      let isRoomCreator = <?php echo $isRoomCreator == 'true' ? 'true' : 'false'; ?>;
+
 
       socket.on('calculateScore', () => {
         console.log("calculateScore event received");
         if (isRoomCreator) {
+          console.log(isRoomCreator);
           calculateScores().then(scores => {
             console.log("Scores calculated");
             socket.emit('scoresCalculated', scores);
@@ -408,8 +416,8 @@ $isRoomCreator = ($creator_id == $user_id) ? 'true' : 'false';
       });
 }
 
-let totalGameScores = {};
-
+    let totalGameScores = {};
+    let numberOfUsers = <?php echo $num_users;?>;
     function calculateScores() {
       console.log("function calculateScores() called");
 
@@ -424,16 +432,6 @@ let totalGameScores = {};
         }),
       })
         .then(response => response.json())
-        .then(data => {
-          Object.entries(data).forEach(([userId, userScore]) => {
-            if (!totalGameScores[userId]) {
-              totalGameScores[userId] = 0;
-            }
-            totalGameScores[userId] += userScore['total'];
-            userScore['totalScore'] = totalGameScores[userId];
-          }); 
-          return data;
-        });
     }
     let currentUserId = <?php echo json_encode($_SESSION['id']); ?>;
     function fetchScores(data) {
@@ -456,10 +454,14 @@ let totalGameScores = {};
         } else {
           console.error(`Total score cell for user ${userId} not found`);
         }
-
         if (userId == currentUserId) {
-          document.getElementById('total-game-score').textContent = totalGameScores[userId];
+          if (!totalGameScores[userId]) {
+            totalGameScores[userId] = 0;
+          }
+          totalGameScores[userId] += userScore['total'];
+          document.getElementById('total-game-score').textContent = totalGameScores[userId] / numberOfUsers;
         }
+
       });
     }
 
