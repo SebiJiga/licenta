@@ -185,6 +185,8 @@ $num_users = $stmt->fetchColumn();
         }
 
         chatMessages.appendChild(messageItem);
+
+        scrollToBottom();
       });
 
       chatForm.addEventListener('submit', (e) => {
@@ -194,6 +196,11 @@ $num_users = $stmt->fetchColumn();
           chatInput.value = '';
         }
       });
+      const chatMessagesContainer = document.getElementById("chat-messages");
+
+      function scrollToBottom() {
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+      }
       ////////////////////////////////////
       let defaultTimerDuration = <?php echo $timerDuration ?> * 1000;
       let timerDuration = defaultTimerDuration / 1000;

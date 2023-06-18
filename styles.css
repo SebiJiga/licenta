@@ -390,7 +390,7 @@ input[type="text"] {
 .room-container-not-creator {
     position: absolute;
     bottom: 0;
-    right: 1%;
+    left: 1%;
     margin-left: 10px;
     margin-bottom: 10px;
     transform: translateX(0%);
@@ -498,7 +498,7 @@ input[type="text"] {
     margin: 15px;
 }
 
-.chat-form input[type="submit"]{
+.chat-form input[type="submit"] {
     background-color: #4CAF50;
     color: #fff;
     font-weight: bold;
@@ -507,10 +507,19 @@ input[type="text"] {
     font-size: 12px;
     padding: 16px 32px;
 }
+.chat-form input[type="submit"]:hover {
+    background-color: #3e8e41;
+    cursor:pointer;
+} 
+.xand0-accept:hover {
+    background-color: #6d150e;
+    cursor:pointer;
+}
 .chat-messages-container {
     margin-bottom: 10px;
-    overflow-y: auto;
+    overflow-y: scroll;
     max-height: 350px;
+    scroll-behavior: smooth;
 }
 
 .my-message {
@@ -547,6 +556,73 @@ input[type="text"] {
     margin-left: 5px;
 }
 
+/*///////////////////////TIC TAC TOE/////////////////////*/
+.xand0-button {
+    position:absole;
+    margin-left:500px;
+    background-color:#da190b;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    padding: 16px 32px;
+}
+
+.xand0-quit {
+    position:absole;
+    width: 100px;
+    height: 100px;
+    margin-left:700px;
+    background-color:#da190b;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    padding: 16px 32px; 
+}
+
+.xand0-button:hover {
+    background-color: #6d150e;
+    cursor:pointer;
+}
+
+.xand0-accept { 
+    background-color:#da190b;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    margin-left: 30px;
+    padding: 4px 12px;
+}
+
+#gameContainer {
+    display:none;
+}
+#ticTacToeTable {
+    position: absolute;
+    right:1%;
+    bottom:10%;
+    border-collapse: collapse;
+    margin: 20px auto;
+  }
+  
+  .cell {
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #000;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .cell:hover {
+    background-color: #eaeaea;
+  }
+  
 /*user list*/
 
 
