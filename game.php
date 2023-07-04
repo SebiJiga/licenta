@@ -68,9 +68,11 @@ $num_users = $stmt->fetchColumn();
   </div>
   <div class="TOMAPAN-TIMER" id="timer-display">
     <?php echo $timerDuration; ?>
+
   </div>
   <div class="TOMAPAN-ROUNDS" id="rounds-display">
     <?php echo $rounds; ?>
+
   </div>
 
   <div class="TOMAPAN-SCORE">
@@ -86,6 +88,7 @@ $num_users = $stmt->fetchColumn();
   <div class="status-text">
     <b id="status-text"></b>
   </div>
+
   <table id="response-table">
     <tr class="response-table-first">
       <th>User</th>
@@ -297,6 +300,9 @@ $num_users = $stmt->fetchColumn();
       let currentRound = 1;
 
       function createRound() {
+        if (isGameEnded) {
+          return;
+        }
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'create_round.php', true);
         xhr.onload = function () {
@@ -328,7 +334,7 @@ $num_users = $stmt->fetchColumn();
 
     function startRound() {
       if (currentRound > roundsRemaining) {
-        endGame();
+        setGameState('end');
         return;
       }
 
@@ -381,7 +387,7 @@ $num_users = $stmt->fetchColumn();
       });
 
       if (roundsToDisplay === 0) {
-        endGame();
+        setGameState('end');
       }
       timerDuration = defaultTimerDuration / 1000;
 
@@ -424,7 +430,8 @@ $num_users = $stmt->fetchColumn();
 }
 
     let totalGameScores = {};
-    let numberOfUsers = <?php echo $num_users;?>;
+    let numberOfUsers = <?php echo $num_users; ?>;
+
     function calculateScores() {
       console.log("function calculateScores() called");
 
@@ -440,10 +447,14 @@ $num_users = $stmt->fetchColumn();
       })
         .then(response => response.json())
     }
+
     let currentUserId = <?php echo json_encode($_SESSION['id']); ?>;
+
     function fetchScores(data) {
       console.log("function fetchScores() called");
       Object.entries(data).forEach(([userId, userScore]) => {
+        console.log("Data for user:", userId);
+        console.log(userScore);
         let categories = ['country', 'city', 'mountain', 'waters', 'plants', 'animals', 'names'];
         categories.forEach(category => {
           let cell = document.getElementById('user-' + userId + '-' + category);
@@ -458,39 +469,53 @@ $num_users = $stmt->fetchColumn();
         let totalScoreCell = document.getElementById('user-' + userId + '-total-score');
         if (totalScoreCell) {
           totalScoreCell.textContent = userScore['total'];
+          console.log("user score = " + userScore['total']);
         } else {
           console.error(`Total score cell for user ${userId} not found`);
         }
-        if (userId == currentUserId) {
-          if (!totalGameScores[userId]) {
-            totalGameScores[userId] = 0;
-          }
-          totalGameScores[userId] += userScore['total'];
-          document.getElementById('total-game-score').textContent = totalGameScores[userId] / numberOfUsers;
+
+        if (!totalGameScores[userId]) {
+          totalGameScores[userId] = 0;
         }
+        totalGameScores[userId] += userScore['total'];
+
+        if (userId == currentUserId) {
+          document.getElementById('total-game-score').textContent = calculateTotalGameScore(userId);
+        }
+
 
       });
     }
 
+    function calculateTotalGameScore(userId) {
+      let totalScore = totalGameScores[userId] || 0;
+      return totalScore;
+    }
     socket.on('fetchScore', (scores) => {
       console.log("Scores calculated");
       fetchScores(scores);
     });
 
-
     function calculateWinner() {
+      console.log("Function calculateWinner called");
       let winnerId = null;
-      let maxScore = -1;
+      let maxScore = 0;
 
-      Object.entries(totalGameScores).forEach(([userId, userScore]) => {
-        if (userScore > maxScore) {
-          maxScore = userScore;
+
+      Object.entries(totalGameScores).forEach(([userId, score]) => {
+        console.log("User ID:", userId);
+        console.log("Score:", score);
+        if (score > maxScore) {
+          maxScore = score;
           winnerId = userId;
         }
       });
 
+      console.log("Winner ID:", winnerId);
       return winnerId;
     }
+
+
 
     var isGameEnded = false;
     function endGame() {
@@ -499,15 +524,10 @@ $num_users = $stmt->fetchColumn();
         return
       }
       console.log("endGame called");
+      document.getElementById('status-text').textContent = 'The game has ended';
       highestScore = 0;
       let winnerId = calculateWinner();
 
-      Object.entries(totalGameScores).forEach(([userId, score]) => {
-        if (score > highestScore) {
-          highestScore = score;
-          winnerId = userId;
-        }
-      });
 
       if (winnerId !== null) {
         fetch('update_winner.php', {
@@ -521,48 +541,50 @@ $num_users = $stmt->fetchColumn();
         })
           .then(response => response.json())
           .then(data => {
-            console.log('Succes:', data);
+            setTimeout(function () {
+              console.log('Succes:', data);
 
-            var congrats = document.createElement('h1');
-            var imgCup = document.createElement('img');
-            var imgProfile = document.createElement('img');
-            var username = document.createElement('h2');
-            var modalContent = document.getElementById('endGameModal-content');
+              var congrats = document.createElement('h1');
+              var imgCup = document.createElement('img');
+              var imgProfile = document.createElement('img');
+              var username = document.createElement('h2');
+              var modalContent = document.getElementById('endGameModal-content');
 
-            congrats.textContent = "Congratulations!!!!";
-            congrats.className = 'congrats-end';
-            imgCup.src = "trophy_image.jpg";
-            imgCup.className = 'imgCup-endGame';
-            imgProfile.src = data.profile_picture;
-            imgProfile.className = 'imgProfile-endGame';
-            username.textContent = data.username;
-            username.className = 'username-end';
-
-
-            modalContent.appendChild(congrats);
-            modalContent.appendChild(imgCup);
-            modalContent.appendChild(imgProfile);
-            modalContent.appendChild(username);
+              congrats.textContent = "Congratulations!!!!";
+              congrats.className = 'congrats-end';
+              imgCup.src = "trophy_image.jpg";
+              imgCup.className = 'imgCup-endGame';
+              imgProfile.src = data.profile_picture;
+              imgProfile.className = 'imgProfile-endGame';
+              username.textContent = data.username;
+              username.className = 'username-end';
 
 
-            document.getElementById('endGameModal').style.display = 'block';
+              modalContent.appendChild(congrats);
+              modalContent.appendChild(imgCup);
+              modalContent.appendChild(imgProfile);
+              modalContent.appendChild(username);
 
-            document.getElementById('backToRoomButton').addEventListener('click', function () {
-              fetch('end_game.php', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  room_code: roomCode
-                }),
-              })
-                .then(response => response.json())
-                .then(data => {
-                  console.log('Room deleted:', data);
-                  window.location.href = "index.php";
+
+              document.getElementById('endGameModal').style.display = 'block';
+
+              document.getElementById('backToRoomButton').addEventListener('click', function () {
+                fetch('end_game.php', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    room_code: roomCode
+                  }),
                 })
-            })
+                  .then(response => response.json())
+                  .then(data => {
+                    console.log('Room deleted:', data);
+                    window.location.href = "index.php";
+                  })
+              })
+            }, 5000);
           })
       }
       isGameEnded = true;
@@ -572,8 +594,6 @@ $num_users = $stmt->fetchColumn();
     let waitingCountdownDuration = 5;
     let waitingCountdown;
     let isCountdownStarted = false;
-
-
     function startWaitingCountdown() {
       isCountdownStarted = true;
       waitingCountdown = setInterval(() => {
@@ -673,11 +693,17 @@ $num_users = $stmt->fetchColumn();
 
             case 'reviewing':
               if (lastState !== 'reviewing') {
-                socket.emit('startReviewingCountdown');
-                createRound();
-
+                if (!isGameEnded) {
+                  socket.emit('startReviewingCountdown');
+                  createRound();
+                }
               }
               break;
+
+            case 'end':
+              if (lastState !== 'end') {
+                endGame();
+              }
           }
           lastState = data.status;
 

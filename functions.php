@@ -40,7 +40,6 @@ function normalize($string) {
 }
 
 function removePrefixes($string) {
-    // Order matters here: longer prefixes should come before shorter ones
     $prefixes = ['muntii', 'muntele', 'oceanul', 'marea', 'raul', 'lacul'];
     $string = strtolower($string);
     foreach ($prefixes as $prefix) {

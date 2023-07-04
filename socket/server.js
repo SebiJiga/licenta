@@ -22,7 +22,6 @@ io.on('connection', (socket) => {
 
   // Handle 'startWaitingCountdown' event from the client-side
   socket.on('startWaitingCountdown', () => {
-    // Emit 'startCountdown' event to the client-side
     socket.emit('startCountdown');
   });
 
@@ -46,6 +45,8 @@ io.on('connection', (socket) => {
     io.emit('fetchScore', scores);
   });
 
+
+  
   //////////////////////////////CHAT////////////////////////
 
   socket.on('newUser', (data) => {

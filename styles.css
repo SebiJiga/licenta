@@ -474,8 +474,12 @@ input[type="text"] {
     border-radius: 5px;
     font-size: 24px;
     padding: 16px 32px;
-    cursor: pointer;
     text-decoration: none;
+}
+
+.start-game-button:hover {
+    cursor: pointer;
+    filter: brightness(50%);
 }
 
 
@@ -522,6 +526,18 @@ input[type="text"] {
     scroll-behavior: smooth;
 }
 
+.chat-messages-container::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+.chat-messages-container::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
 .my-message {
     text-align: right;
 }
@@ -555,10 +571,27 @@ input[type="text"] {
     margin-right: 5px;
     margin-left: 5px;
 }
+/*/////////////////CARDS/////////////////*/
+.cards-button {
+    margin-left:50px;
+    background-color:#da190b;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    padding: 16px 32px;
+}
+
+.cards-button:hover {
+    background-color: #6d150e;
+    cursor:pointer;
+}
+
+
 
 /*///////////////////////TIC TAC TOE/////////////////////*/
 .xand0-button {
-    position:absole;
     margin-left:500px;
     background-color:#da190b;
     color: #fff;
@@ -598,6 +631,17 @@ input[type="text"] {
     padding: 4px 12px;
 }
 
+.x-symbol {
+    color: #da190b; 
+    background-color: #ddd9d9;
+
+  }
+  
+  .o-symbol {
+    color: #0000ff; 
+    background-color: #ddd9d9;
+  }
+  
 #gameContainer {
     display:none;
 }
@@ -608,6 +652,7 @@ input[type="text"] {
     border-collapse: collapse;
     margin: 20px auto;
   }
+  
   
   .cell {
     width: 100px;
@@ -622,6 +667,8 @@ input[type="text"] {
   .cell:hover {
     background-color: #eaeaea;
   }
+
+  
   
 /*user list*/
 
@@ -670,8 +717,8 @@ input[type="text"] {
 
 /*/////////////////////////////////////////////////.........................*/
 @media screen and (max-width:1400px) {
-    .chat-container{
-        max-width: 700px;
+    .users-list-container {
+       display: none;
     }
 }
 
@@ -693,11 +740,10 @@ input[type="text"] {
         margin-left: auto;
         margin-right: auto;
     }
-
-    .chat-container{
-        width: 500px;
-        height:300px;
+    .chat-container {
+        max-height: 300px;;
     }
+
 }
 
 @media screen and (max-width: 950px) {
@@ -719,6 +765,27 @@ input[type="text"] {
         margin-left: auto;
         margin-right: auto;
     }
+
+    .xand0-button,
+    .cards-button {
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        display: inline-block;
+    }
+
+    .chat-container {
+        width: 90%;
+        padding: 0 10px;
+    }
+
+    .chat-form input[type="text"] {
+        width: 90%;
+        margin-left:10px;
+    }
+
+    
+    
 }
 
 /*//////////////////////////////////////////////////////////////////GAME///////////////////////////////*/
@@ -731,7 +798,18 @@ input[type="text"] {
     font-family: fantasy;
     color: #3e8e41;
     padding: 15px;
+    grid-column-gap: 10px;
 }
+
+@media (max-width: 950px) {
+    .TOMAPAN {
+      grid-template-columns: auto auto; /* Switch to two columns on smaller screens */
+      font-size: 1.5rem; /* Adjust the font size */
+      justify-content: flex-start;
+    }
+} 
+  
+  
 
 .TOMAPAN b {
     pointer-events: none;
@@ -785,6 +863,8 @@ input[type="text"] {
     grid-area: 2/ 6 / 3 / 7;
 }
 
+
+
 .TOMAPAN input[type="text"] {
     font-size: medium;
     color: #333;
@@ -811,7 +891,6 @@ input[type="text"] {
 }
 
 .TOMAPAN-ROUNDS {
-
     position: absolute;
     left: 49%;
     text-align: center;
@@ -884,13 +963,13 @@ input[type="text"] {
     border-collapse: separate;
     border-spacing: 40px 20px;
     position: absolute;
-    left: 3%;
+    left: -1%;
     top: 30%;
     font-size: 2.5rem;
 }
 
 .response-table-content {
-    font-size: 1.5rem;
+    font-size: 0.5rem;
     font-family: Georgia, 'Times New Roman', Times, serif;
 
 }
@@ -936,10 +1015,105 @@ input[type="text"] {
     color: #3e8e41;
 }
 
+@media (max-width: 950px) {
+    .TOMAPAN {
+      grid-template-columns: auto auto; 
+      font-size: 1.5rem; 
+      grid-column-gap: 15px;
+    }
 
+    .item1 {
+        grid-area: 1 / 1 / 2 / 2;
+    }
+    
+    .item2 {
+        grid-area: 1 / 2 / 2 / 3;
+    }
+    
+    .item3 {
+        grid-area: 2 / 1 / 3 / 2;
+    }
+    
+    .item4 {
+        grid-area: 2 / 2 / 3 / 3
+    }
+    
+    .item5 {
+        grid-area: 3 / 1 / 4 / 2
+    }
+    
+    .item6 {
+        grid-area: 3 / 2 / 4 / 3;
+    }
+    
+    .item7 {
+        grid-area: 4 / 1 / 5 / 2;
+    }
+    
+    .item8 {
+        grid-area: 4 / 2 / 5 / 3;
+    }
+    
+    .item9 {
+        grid-area: 5 / 1 / 6 / 2;
+    }
+    
+    .item10 {
+        grid-area: 5 / 2 / 6 / 3;
+    }
+    
+    .item11 {
+        grid-area: 6 / 1 / 7 / 2;
+    }
+    
+    .item12 {
+        grid-area: 6 / 2 / 7 / 3;
+    }
+
+    #random-letter {
+        font-size: 50px;
+        left:30%;
+        top:2%;
+    }
+    
+    #response-table {
+        left: -3%;
+        top: 55%;
+        font-size: 1rem;
+    }
+
+    .response-table-content {
+        font-size: 0.2rem;
+    }
+
+    .TOMAPAN-TIMER {
+        left: 45%;
+        top: 4%;
+        font-size:1.3rem;
+    }
+
+    .TOMAPAN-ROUNDS {
+        top: 4%;
+        left: 80%;
+        font-size: 1.3rem;
+    }
+
+    .TOMAPAN-SCORE {
+        right: 1%;
+        top: 25%
+    }
+
+    .status-text {
+        font-size:1.5rem;
+        top:15%;
+        left:40%;
+    }
+
+      
+} 
 .modal {
     display: none;
-    position: fixed;
+    position: absolute;
     z-index: 1;
     left: 0;
     top: 0;

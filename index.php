@@ -117,7 +117,7 @@ if (!is_logged_in()) {
         const profilePopupClose = document.getElementById('profilePopupClose');
 
         profilePicture.addEventListener('click', (e) => {
-            e.preventDefault(); // this line prevents the default behavior of the anchor tag
+            e.preventDefault();
             profilePopupOverlay.classList.add('popup-show');
         });
 

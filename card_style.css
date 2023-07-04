@@ -1,0 +1,132 @@
+*, *::after, *::before { 
+    box-sizing: border-box;
+  }
+  body{
+    padding-top: 1rem;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 4rem);
+    grid-template-rows:7rem 2rem 7rem;
+    gap: .5rem;
+    justify-content: center;
+    padding-top: 1rem;
+  }
+
+  .deck {
+    height: 100%;
+    width: 100%;
+    border: 3px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size:3rem;
+    border-radius: .5rem;
+    color: white;
+    user-select: none;
+  }
+
+  .computer-deck { 
+    background-color: green;
+  }
+
+  .computer-deck::before{
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: bold;
+    position:absolute;
+    margin-right:200px;
+    content: "Computer cards";
+    color:black;
+    font-size:1rem;
+  }
+
+  .player-deck::before {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: bold;
+    position: absolute;
+    margin-right:180px;
+    content: "Your cards";
+    color:black;
+    font-size:1rem;
+  }
+  .player-deck {
+    background-color:blue ;
+  }
+
+  .text {
+    grid-column: span 3;
+    display: flex;
+    justify-content: center;
+    align-items: center
+  }
+
+  .welcome-text {
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size:2rem;
+    color: #3e8e41;
+  }
+
+  .instructions {
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    margin-top: 10px;
+    margin-bottom:5px;
+  }
+
+  .button {
+    margin-top: 30px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .button:hover {
+    background-color: #3e8e41;
+  }
+  
+
+  .card {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border: 1px solid black;
+    border-radius: .5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem;
+  }
+
+  .card.red {
+    color: red;
+  }
+  
+  .card.black {
+    color: black;
+  }
+  
+  .card::before,
+  .card::after {
+    position: absolute;
+    content: attr(data-value);
+    font-size: 1rem;
+  }
+  
+  .card::before {
+    top: .5rem;
+    left: .5rem
+  }
+  
+  .card::after {
+    bottom: .5rem;
+    right: .5rem;
+    transform: rotate(180deg);
+  }

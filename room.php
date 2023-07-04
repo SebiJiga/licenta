@@ -139,6 +139,7 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
         <div class="rounds">
             <label for="rounds">Number of rounds:</label>
             <select class="rounds-settings" id="rounds">
+                <option value ="3">3 rounds</option>
                 <option value="5">5 rounds</option>
                 <option value="10">10 rounds</option>
                 <option value="26">Whole alphabet (26 rounds)</option>
@@ -160,6 +161,7 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                 <input type="text" id="chat-input" placeholder="Enter your message">
                 <input type="submit" value="Send" class="send-button">
                 <button id="xand0-button" class="xand0-button">Play Tic-Tac-Toe</button>
+                <button id="cards-button" class="cards-button" onclick="openCardWindow()">Play Card-War</button>
             </div>
         </form>
     </div>
@@ -266,7 +268,7 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                 chatMessages.appendChild(sentRequestMessage);
                 scrollToBottom();
 
-                
+
                 socket.emit('gameRequest', { user: user, room_code: '<?php echo $room_code; ?>' });
             });
 
@@ -292,7 +294,7 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
             });
 
             socket.on('gameStarted', function (data) {
-                
+
                 var roomCode = data.room_code;
                 var sender = data.sender;
                 var receiver = data.receiver;
@@ -304,7 +306,7 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                 var isSender = (currentUser === sender);
                 var isReceiver = (currentUser === receiver);
                 var currentPlayer = isSender ? 'X' : 'O';
-                if (currentPlayer === 'X' ) {
+                if (currentPlayer === 'X') {
                     var xMessage = document.createElement('div');
                     xMessage.id = 'xMessage';
                     xMessage.textContent = 'You are playing as X. You have the first move';
@@ -320,7 +322,7 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
 
                 }
                 var currentPlayerTurn = 'X'
-                
+
                 if (isSender || isReceiver) {
                     var gameContainer = document.getElementById('gameContainer');
                     gameContainer.style.display = 'block';
@@ -337,6 +339,7 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                                 this.textContent = currentPlayer;
                                 this.disabled = true;
 
+
                                 socket.emit('moveMade', { room_code: roomCode, row: row, col: col, symbol: currentPlayer, sender: sender, receiver: receiver });
                             }
                         });
@@ -350,11 +353,12 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
 
                         var cell = document.querySelector('[data-row="' + row + '"][data-col="' + col + '"]');
                         cell.textContent = symbol;
+                        cell.classList.add(symbol === 'X' ? 'x-symbol' : 'o-symbol')
                         cell.disabled = true;
                         console.log('cell updated ' + cell);
-                        
-                       
-                                
+
+
+
 
 
                         if (xand0win(symbol)) {
@@ -380,53 +384,56 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                             scrollToBottom();
 
 
-                            playAgainButtoon.addEventListener('click', function() {                                
-                                socket.emit('playAgain', { room_code: roomCode});
+                            playAgainButtoon.addEventListener('click', function () {
+                                socket.emit('playAgain', { room_code: roomCode });
                                 currentPlayerTurn = 'X';
                             });
 
 
-                            quitGameButton.addEventListener('click', function() {
-                                socket.emit('quitGame', { room_code: roomCode});
+                            quitGameButton.addEventListener('click', function () {
+                                socket.emit('quitGame', { room_code: roomCode });
                             })
                         } else {
-                            console.log(currentPlayerTurn)
-                            currentPlayerTurn = (currentPlayerTurn === 'X') ? 'O' : 'X';
-                           console.log(currentPlayerTurn);
-                        }                   
-                        
+                            var allCellsFilled = true;
+                            var cells = document.getElementsByClassName('cell');
+                            for (var i = 0; i < cells.length; i++) {
+                                if (cells[i].textContent === '') {
+                                    allCellsFilled = false;
+                                    break
+                                }
+                            }
+
+                            if (allCellsFilled) {
+                                for (var i = 0; i < cells.length; i++) {
+                                    cells[i].textContent = '';
+                                    cells[i].disabled = false;
+                                }
+                            }
+                            else {
+                                console.log(currentPlayerTurn)
+                                currentPlayerTurn = (currentPlayerTurn === 'X') ? 'O' : 'X';
+                                console.log(currentPlayerTurn);
+                            }
+                        }
+
                     });
                 }
 
             });
 
-            socket.on('playAgainCalled', function() {
+            socket.on('playAgainCalled', function () {
                 var cells = document.getElementsByClassName('cell');
                 var winnerMessage = document.getElementById('winnerMessage');
                 winnerMessage.textContent = 'New game has started';
                 for (var i = 0; i < cells.length; i++) {
-                     cells[i].textContent = '';
-                     cells[i].disabled = false;
+                    cells[i].textContent = '';
+                    cells[i].disabled = false;
                 }
 
             });
 
-            socket.on('quitGameCalled', function() {
-                var cells = document.getElementsByClassName('cell');
-                var winnerMessage = document.getElementById('winnerMessage');
-                winnerMessage.style.display = 'none';
-                for (var i = 0; i < cells.length; i++) {
-                     cells[i].textContent = '';
-                     cells[i].disabled = false;
-                }
-                var gameContainer = document.getElementById('gameContainer');
-                    gameContainer.style.display = 'none';
-
-                var xMessage = document.getElementById('xMessage');
-                var oMessage = debugger.getElementById('oMessage');
-                xMessage.style.display = 'none';
-                oMessage.style.display = 'none';    
-
+            socket.on('quitGameCalled', function () {
+               resetGame();
             });
 
             function xand0win(symbol) {
@@ -458,7 +465,40 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                 return false;
             }
 
+            function resetGame() {
+                var cells = document.getElementsByClassName('cell');
+                for (var i = 0; i < cells.length; i++) {
+                    cells[i].textContent = '';
+                    cells[i].disabled = false;
+                    cells[i].style.backgroundCOlor = 'white';
+                }
 
+                
+                var xMessage = document.getElementById('xMessage');
+                var oMessage = document.getElementById('oMessage');
+                var winnerMessage = document.getElementById('winnerMessage');
+
+                var gameContainer = document.getElementById('gameContainer');
+                gameContainer.style.display = 'none';
+                
+                if (xMessage) {
+                    xMessage.parentNode.removeChild(xMessage);
+                }
+                if (oMessage) {
+                    oMessage.parentNode.removeChild(oMessage);
+                }
+                if (winnerMessage) {
+                    winnerMessage.parentNode.removeChild(winnerMessage);
+                }
+
+                currentPlayerTurn = 'X'; // Reset the current player's turnF
+                if(currentPlayer === 'X') {
+                    currentPlayer === '';
+                } else if (currentPlayer === 'O' ) {
+                    currentPlayer === '';
+                }
+            }
+            
             const chatMessagesContainer = document.getElementById("chat-messages");
 
             function scrollToBottom() {
@@ -520,6 +560,14 @@ $is_creator = $room['creator_id'] == $_SESSION['id'];
                 profilePopupOverlay.classList.remove('popup-show');
             });
         }
+
+        ////////////////////////////////////////////CARDS GAME
+
+        function openCardWindow() {
+            var height = window.screen.height;
+            var popup = window.open("cardwar.html", "CardWarPopup", "width=600,height=" + height);
+        }
+
     </script>
 </body>
 
